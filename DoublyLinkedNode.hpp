@@ -2,11 +2,12 @@
 #define DOUBLYLINKEDNODE_HPP
 
 #include <memory>
+#include "Iterator.hpp"
 
 namespace   ft
 {
     template    <typename Tp>
-    class DoublyLinkedNode
+    class DoublyLinkedNode : public BidirectionIterable<DoublyLinkedNode<Tp>, Tp>
     {
         public:
             typedef DoublyLinkedNode<Tp> node;
@@ -17,14 +18,14 @@ namespace   ft
         public:
             DoublyLinkedNode()
                 : content_(Tp()),
-                  prev(NULL),
-                  next(NULL)
+                  prev_(NULL),
+                  next_(NULL)
             {
             };
             DoublyLinkedNode(const Tp& content_)
                 : content_(content_),
-                  prev(NULL),
-                  next(NULL)
+                  prev_(NULL),
+                  next_(NULL)
             {
             };
             DoublyLinkedNode(const DoublyLinkedNode& node_);
@@ -39,21 +40,29 @@ namespace   ft
             {
                 return content_;
             }
-            Tp& operator*()
-            {
-                return content_;
-            }
             void linkNext(node* newNode_)
             {
                 next_ = newNode_;
-                newNode->prev_ = this;
+                newNode_->prev_ = this;
             }
             void linkPrev(node* newNode_)
             {
                 prev_ = newNode_;
-                newNode->next_ = this;
+                newNode_->next_ = this;
             }
 
+            virtual DoublyLinkedNode* getNext()
+            {
+                return next_;
+            }
+            virtual DoublyLinkedNode* getPrev()
+            {
+                return prev_;
+            }
+            virtual Tp&               operator*()
+            {
+                return content_;
+            }
     };
 }
 

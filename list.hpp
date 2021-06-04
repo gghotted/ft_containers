@@ -22,7 +22,7 @@ class   list
         typedef typename allocator_type::const_reference const_reference;
         typedef typename allocator_type::pointer         pointer;
         typedef typename allocator_type::const_pointer   const_pointer;
-        typedef typename BidirectionIterator<node>       iterator;
+        typedef BidirectionIterator<node>                iterator;
         // const_iterator;
         // reverse_iterator;
         // const_reverse_iterator;
@@ -48,7 +48,10 @@ class   list
             if (end_ == NULL)
                 setFirstNode(newNode);
             else
+            {
                 end_->linkNext(newNode);
+                end_ = newNode;
+            }
             size_++;
         }
 
@@ -69,11 +72,28 @@ class   list
             return end_->content();
         }
 
+        iterator begin()
+        {
+            if (begin_ == NULL)
+                return end();
+            return iterator(begin_);
+        }
+        iterator end()
+        {
+            return iterator(end_ + 1);
+        }
+
+        size_type size() const
+        {
+            return size_;
+        }
+
     private:
         allocator_type allocator_;
         size_type      size_;
         node*          begin_;
         node*          end_;
+        // iterator       endIterator_;
 
         void setFirstNode(node* node_)
         {

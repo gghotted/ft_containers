@@ -17,12 +17,12 @@ struct iterator
     typedef Category  iterator_category;
 };
 
-template <class Tp, class Distance = std::ptrdiff_t,
-          class Pointer = Tp*, class Reference = Tp&>
-class BidirectionIterator : public iterator<std::bidirectional_iterator_tag, Tp, Distance, Pointer, Reference>
+template <class NodeTp, class Distance = std::ptrdiff_t,
+          class Pointer = NodeTp*, class Reference = NodeTp&>
+class BidirectionIterator : public iterator<std::bidirectional_iterator_tag, NodeTp, Distance, Pointer, Reference>
 {
-    protected:
-        // typedef BidirectionIterator<std::bidirectional_iterator_tag, Tp, Distance, Pointer, Reference> biIterator;
+    private:
+        // typedef BidirectionIterator<std::bidirectional_iterator_tag, NodeTp, Distance, Pointer, Reference> biIterator;
         Pointer p;
 
     public:
@@ -54,30 +54,44 @@ class BidirectionIterator : public iterator<std::bidirectional_iterator_tag, Tp,
         {
             return (p != rhs.p);
         }
-        Reference operator*()
+        typename NodeTp::content_type& operator*()
         {
             return **p;
         }
         BidirectionIterator operator++(int)
         {
-            biIterator tmp(*this);
+            BidirectionIterator tmp(*this);
             operator++();
             return tmp;
         }
         BidirectionIterator operator--(int)
         {
-            biIterator tmp(*this);
+            BidirectionIterator tmp(*this);
             operator--();
             return tmp;
         }
         BidirectionIterator& operator++()
         {
-            // p = &(*p + 1);
+            if (p->getNext()) p = p->getNext();
+            else              p = p + 1;
+            return *this;
         }
         BidirectionIterator& operator--()
         {
-            // p = &(--*p);
+            p = p->getPrev();
+            return *this;
         }
+};
+
+template <class NodeTp, class ContentTp>
+class BidirectionIterable
+{
+    public:
+        typedef ContentTp content_type;
+
+        virtual NodeTp*    getNext() = 0;
+        virtual NodeTp*    getPrev() = 0;
+        virtual ContentTp& operator*() = 0;
 };
 }
 
