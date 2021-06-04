@@ -72,8 +72,7 @@ class BidirectionIterator : public iterator<std::bidirectional_iterator_tag, Nod
         }
         BidirectionIterator& operator++()
         {
-            if (p->getNext()) p = p->getNext();
-            else              p = p + 1;
+            p = p->getNext();
             return *this;
         }
         BidirectionIterator& operator--()

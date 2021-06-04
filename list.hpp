@@ -45,6 +45,7 @@ class   list
         void push_back(const value_type& val_)
         {
             node* newNode = new node(val_);
+            newNode->linkNext(&endOfNode_);
             if (end_ == NULL)
                 setFirstNode(newNode);
             else
@@ -80,7 +81,7 @@ class   list
         }
         iterator end()
         {
-            return iterator(end_ + 1);
+            return iterator(&endOfNode_);
         }
 
         size_type size() const
@@ -93,7 +94,7 @@ class   list
         size_type      size_;
         node*          begin_;
         node*          end_;
-        // iterator       endIterator_;
+        node           endOfNode_;
 
         void setFirstNode(node* node_)
         {
