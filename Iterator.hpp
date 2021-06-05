@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <cstddef>
+#include "list.hpp"
 
 namespace ft
 {
@@ -17,25 +18,32 @@ struct iterator
     typedef Category  iterator_category;
 };
 
-template <class NodeTp, class Distance = std::ptrdiff_t,
-          class Pointer = NodeTp*, class Reference = NodeTp&>
-class BidirectionIterator : public iterator<std::bidirectional_iterator_tag, NodeTp, Distance, Pointer, Reference>
+template <class BidirectionIterableObject, bool reverse = false>
+class BidirectionIterator
 {
+    public:
+        typedef typename BidirectionIterableObject::value_type value_type;
+        typedef std::ptrdiff_t                                 differnce_type;
+        typedef value_type*                                    pointer;
+        typedef value_type&                                    reference;
+        typedef std::bidirectional_iterator_tag                iterator_category;
+
     private:
-        // typedef BidirectionIterator<std::bidirectional_iterator_tag, NodeTp, Distance, Pointer, Reference> biIterator;
-        Pointer p;
+        typedef typename BidirectionIterableObject::create_by_type create_by_type;
+
+        BidirectionIterableObject iteratorObj;
+        template<class, class> friend class list;
 
     public:
         BidirectionIterator()
-            : p(NULL)
         {
         }
-        BidirectionIterator(Pointer p)
-            : p(p)
+        BidirectionIterator(create_by_type tp)
+            : iteratorObj(tp)
         {
         }
         BidirectionIterator(const BidirectionIterator& bi)
-            : p(bi.p)
+            : iteratorObj(bi.iteratorObj)
         {
         }
         virtual ~BidirectionIterator()
@@ -43,20 +51,20 @@ class BidirectionIterator : public iterator<std::bidirectional_iterator_tag, Nod
         }
         BidirectionIterator& operator=(const BidirectionIterator& bi)
         {
-            p = bi.p;
+            iteratorObj = bi.iteratorObj;
         }
 
         bool operator==(const BidirectionIterator& rhs) const
         {
-            return (p == rhs.p);
+            return (iteratorObj.id() == rhs.iteratorObj.id());
         }
         bool operator!=(const BidirectionIterator& rhs) const
         {
-            return (p != rhs.p);
+            return (iteratorObj.id() != rhs.iteratorObj.id());
         }
-        typename NodeTp::content_type& operator*()
+        value_type& operator*()
         {
-            return **p;
+            return *iteratorObj;
         }
         BidirectionIterator operator++(int)
         {
@@ -72,25 +80,28 @@ class BidirectionIterator : public iterator<std::bidirectional_iterator_tag, Nod
         }
         BidirectionIterator& operator++()
         {
-            p = p->getNext();
+            if (reverse) iteratorObj.decrease();
+            else         iteratorObj.increase();
             return *this;
         }
         BidirectionIterator& operator--()
         {
-            p = p->getPrev();
+            if (reverse) iteratorObj.increase();
+            else         iteratorObj.decrease();
             return *this;
         }
 };
 
-template <class NodeTp, class ContentTp>
-class BidirectionIterable
+template <class ValueTp, class CreateByTp = ValueTp>
+class BidirectionIterableObject
 {
     public:
-        typedef ContentTp content_type;
+        virtual ~BidirectionIterableObject() {};
 
-        virtual NodeTp*    getNext() = 0;
-        virtual NodeTp*    getPrev() = 0;
-        virtual ContentTp& operator*() = 0;
+        virtual ValueTp&    operator*() = 0;
+        virtual const void* id() const = 0;
+        virtual void        increase() = 0;
+        virtual void        decrease() = 0;
 };
 }
 

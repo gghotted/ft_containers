@@ -7,7 +7,7 @@
 namespace   ft
 {
     template    <typename Tp>
-    class DoublyLinkedNode : public BidirectionIterable<DoublyLinkedNode<Tp>, Tp>
+    class DoublyLinkedNode
     {
         public:
             typedef DoublyLinkedNode<Tp> node;

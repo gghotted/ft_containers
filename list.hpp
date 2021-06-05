@@ -15,16 +15,45 @@ class   list
     private:
         typedef typename DoublyLinkedNode<Tp>::node node;
 
+        class IteratorObject : public BidirectionIterableObject<Tp, node*>
+        {
+            public:
+                typedef Tp    value_type;
+                typedef node* create_by_type;
+
+            private:
+                create_by_type node_;
+
+                template<class, class> friend class list;
+
+            public:
+                IteratorObject()                                             {}
+                IteratorObject(create_by_type node_)      : node_(node_)     {}
+                IteratorObject(const IteratorObject& obj) : node_(obj.node_) {}
+                virtual ~IteratorObject()                                    {}
+                IteratorObject& operator=(const IteratorObject& obj)
+                {
+                    node_ = obj.node_;
+                    return *this;
+                }
+                create_by_type getNode() { return node_; }
+                virtual value_type& operator*() { return **node_; }
+                virtual const void* id() const  { return node_; }
+                virtual void        increase()  { node_ = node_->getNext(); }
+                virtual void        decrease()  { node_ = node_->getPrev(); }
+        };
+
     public:
-        typedef Tp                                       value_type;
-        typedef Alloc                                    allocator_type;
-        typedef typename allocator_type::reference       reference;
-        typedef typename allocator_type::const_reference const_reference;
-        typedef typename allocator_type::pointer         pointer;
-        typedef typename allocator_type::const_pointer   const_pointer;
-        typedef BidirectionIterator<node>                iterator;
+        typedef Tp                                        value_type;
+        typedef Alloc                                     allocator_type;
+        typedef typename allocator_type::reference        reference;
+        typedef typename allocator_type::const_reference  const_reference;
+        typedef typename allocator_type::pointer          pointer;
+        typedef typename allocator_type::const_pointer    const_pointer;
+        typedef BidirectionIterator<IteratorObject>       iterator;
+
         // const_iterator;
-        // reverse_iterator;
+        typedef BidirectionIterator<IteratorObject, true> reverse_iterator;
         // const_reverse_iterator;
         // difference_type;
         typedef size_t                                   size_type;
@@ -45,13 +74,13 @@ class   list
         void push_back(const value_type& val_)
         {
             node* newNode = new node(val_);
-            newNode->linkNext(&endOfNode_);
             if (end_ == NULL)
                 setFirstNode(newNode);
             else
             {
                 end_->linkNext(newNode);
                 end_ = newNode;
+                end_->linkNext(&endOfNode_);
             }
             size_++;
         }
@@ -83,10 +112,27 @@ class   list
         {
             return iterator(&endOfNode_);
         }
+        reverse_iterator rbegin()
+        {
+            if (end_ == NULL)
+                return rend();
+            return reverse_iterator(end_);
+        }
+        reverse_iterator rend()
+        {
+            return reverse_iterator(&beginOfNode_);
+        }
 
         size_type size() const
         {
             return size_;
+        }
+
+        // Modifiers
+        iterator erase (iterator position)
+        {
+            (void)position.iteratorObj.node_;
+            return position;
         }
 
     private:
@@ -94,12 +140,15 @@ class   list
         size_type      size_;
         node*          begin_;
         node*          end_;
+        node           beginOfNode_;
         node           endOfNode_;
 
         void setFirstNode(node* node_)
         {
             begin_ = node_;
             end_ = node_;
+            begin_->linkPrev(&beginOfNode_);
+            end_->linkNext(&endOfNode_);
         }
 };
 };

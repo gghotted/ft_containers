@@ -1,6 +1,7 @@
 #include <iostream>
 #include "list.hpp"
 #include <list>
+
 int main()
 {
 	ft::list<int>	lst(5, 4);
@@ -12,4 +13,6 @@ int main()
 	// std::cout << &*end;
 	for (; begin != end; begin++)
 		std::cout << *begin << ' ';
+
+	lst.erase(begin);
 }

@@ -1,22 +1,16 @@
-// class Base
-// {
-//     int a;
+#include <list>
+#include <iostream>
 
-//     public:
-//         int getA() {return a;}
+typedef struct{
+  int x;
+  int y;
+}my_struct;
 
-//         Base me() {return *this;};
-// };
+int main()
+{
+    std::list<my_struct> the_list;
+    std::list<my_struct>::iterator the_iter = the_list.begin();
 
-// class A : public Base
-// {
-//     public:
-//         A me() {return *this;};
-// };
-
-// int main()
-// {
-//     A a;
-
-//     A a2 = a.me();
-// }
+    the_list.erase();
+    the_iter.
+}
