@@ -9,59 +9,61 @@ namespace   ft
     template    <typename Tp>
     class DoublyLinkedNode
     {
-        public:
-            typedef DoublyLinkedNode<Tp> node;
         private:
-            Tp    content_;
-            node* prev_;
-            node* next_;
+            Tp                content_;
+            DoublyLinkedNode* prev_;
+            DoublyLinkedNode* next_;
+
         public:
+            virtual ~DoublyLinkedNode() {}
+
             DoublyLinkedNode()
                 : content_(Tp()),
                   prev_(NULL),
                   next_(NULL)
             {
-            };
+            }
             DoublyLinkedNode(const Tp& content_)
                 : content_(content_),
                   prev_(NULL),
                   next_(NULL)
             {
-            };
-            DoublyLinkedNode(const DoublyLinkedNode& node_);
-            virtual ~DoublyLinkedNode() {};
-            DoublyLinkedNode& operator=(const DoublyLinkedNode& node_);
+            }
+            DoublyLinkedNode(const DoublyLinkedNode& node_)
+            {
+                *this = node_;
+            }
 
-            Tp&       content()
+            DoublyLinkedNode& operator=(const DoublyLinkedNode& node_)
+            {
+                content_ = node_.content_;
+                prev_ = node_.prev_;
+                next_ = node_.next_;
+                return *this;
+            }
+            Tp&               operator*()
             {
                 return content_;
             }
-            const Tp& content() const
-            {
-                return content_;
-            }
-            void linkNext(node* newNode_)
+
+            void linkNext(DoublyLinkedNode* newNode_)
             {
                 next_ = newNode_;
                 newNode_->prev_ = this;
             }
-            void linkPrev(node* newNode_)
+            void linkPrev(DoublyLinkedNode* newNode_)
             {
                 prev_ = newNode_;
                 newNode_->next_ = this;
             }
 
-            virtual DoublyLinkedNode* getNext()
+            DoublyLinkedNode* getNext()
             {
                 return next_;
             }
-            virtual DoublyLinkedNode* getPrev()
+            DoublyLinkedNode* getPrev()
             {
                 return prev_;
-            }
-            virtual Tp&               operator*()
-            {
-                return content_;
             }
     };
 }
