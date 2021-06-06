@@ -16,7 +16,7 @@ void testList(CompareTester& ct)
     /* constructor */
     LIST_TEST(constructor0);
     LIST_TEST(constructor1);
-    LIST_TEST(constructor2);
+    // LIST_TEST(constructor2);
 
     LIST_TEST(push_back);
 }

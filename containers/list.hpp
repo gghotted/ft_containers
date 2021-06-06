@@ -15,7 +15,8 @@ class   list
     private:
         typedef DoublyLinkedNode<Tp> node;
 
-        class ListIterator : BidirectionIteratorBase<ListIterator, Tp>
+        template <typename Tp_, bool reverse = false>
+        class ListIterator : iterator<bidirectional_iterator_tag, Tp_>
         {
             private:
                 template<class, class> friend class list;
@@ -33,24 +34,45 @@ class   list
                     node_ = li.node_;
                     return *this;
                 }
+
                 ListIterator& operator++()
                 {
-                    node_ = node_->getNext();
+                    if (reverse) node_ = node_->getPrev();
+                    else         node_ = node_->getNext();
                     return *this;
                 }
+
                 ListIterator& operator--()
                 {
-                    node_ = node_->getPrev();
+                    if (reverse) node_ = node_->getNext();
+                    else         node_ = node_->getPrev();
                     return *this;
                 }
-                Tp& operator*()
+
+                ListIterator operator++(int)
+                {
+                    ListIterator tmp(*this);
+                    ++(*this);
+                    return tmp;
+                }
+
+                ListIterator operator--(int)
+                {
+                    ListIterator tmp(*this);
+                    --(*this);
+                    return tmp;
+                }
+
+                Tp_& operator*()
                 {
                     return **node_;
                 }
+
                 bool operator==(const ListIterator& rhs) const
                 {
                     return (node_ == rhs.node_);
                 }
+
                 bool operator!=(const ListIterator& rhs) const
                 {
                     return (node_ != rhs.node_);
@@ -59,18 +81,18 @@ class   list
 
     public:
         /* member type */
-        typedef Tp                                                       value_type;
-        typedef Alloc                                                    allocator_type;
-        typedef typename allocator_type::reference                       reference;
-        typedef typename allocator_type::const_reference                 const_reference;
-        typedef typename allocator_type::pointer                         pointer;
-        typedef typename allocator_type::const_pointer                   const_pointer;
-        typedef BidirectionIterator<ListIterator, Tp, node*>             iterator;
-        typedef BidirectionIterator<ListIterator, const Tp, node*>       const_iterator;
-        typedef BidirectionIterator<ListIterator, Tp, node*, true>       reverse_iterator;
-        typedef BidirectionIterator<ListIterator, const Tp, node*, true> const_reverse_iterator;
-        typedef ptrdiff_t                                                difference_type;
-        typedef size_t                                                   size_type;
+        typedef Tp                                       value_type;
+        typedef Alloc                                    allocator_type;
+        typedef typename allocator_type::reference       reference;
+        typedef typename allocator_type::const_reference const_reference;
+        typedef typename allocator_type::pointer         pointer;
+        typedef typename allocator_type::const_pointer   const_pointer;
+        typedef ListIterator<Tp>                         iterator;
+        typedef ListIterator<const Tp>                   const_iterator;
+        typedef ListIterator<Tp, true>                   reverse_iterator;
+        typedef ListIterator<const Tp, true>             const_reverse_iterator;
+        typedef ptrdiff_t                                difference_type;
+        typedef size_t                                   size_type;
 
         /* constructor */
         explicit list(const allocator_type& alloc_ = allocator_type())
@@ -94,18 +116,18 @@ class   list
                 push_back(val_);
         }
 
-        template <class InputIterator>
-        list(
-            InputIterator first, InputIterator last,
-            const allocator_type& alloc_ = allocator_type())
-            : allocator_(alloc_),
-              size_(0),
-              begin_(NULL),
-              end_(NULL)
-        {
-            for (; first != last; first++)
-                push_back(*first);
-        }
+        // template <class InputIterator>
+        // list(
+        //     InputIterator first, InputIterator last,
+        //     const allocator_type& alloc_ = allocator_type())
+        //     : allocator_(alloc_),
+        //       size_(0),
+        //       begin_(NULL),
+        //       end_(NULL)
+        // {
+        //     for (; first != last; first++)
+        //         push_back(*first);
+        // }
 
         void push_back(const value_type& val_)
         {
@@ -148,7 +170,7 @@ class   list
         {
             if (begin_ == NULL)
                 return end();
-            return iterator(begin_);
+            return const_iterator(begin_);
         }
         iterator end()
         {
@@ -156,7 +178,7 @@ class   list
         }
         const_iterator end() const
         {
-            return iterator(&endOfNode_);
+            return const_iterator(&endOfNode_);
         }
         reverse_iterator rbegin()
         {

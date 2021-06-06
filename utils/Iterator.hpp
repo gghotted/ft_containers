@@ -23,57 +23,6 @@ struct iterator
     typedef Reference reference;
     typedef Category  iterator_category;
 };
-
-template <class Derived, class Tp>
-class BidirectionIteratorBase
-{
-    virtual Derived& operator++() = 0;
-    virtual Derived& operator--() = 0;
-    virtual Tp& operator*() = 0;
-    virtual bool operator==(const Derived& rhs) const = 0;
-    virtual bool operator!=(const Derived& rhs) const = 0;
-};
-
-template <class Base, class Tp, class ConstructArgTp = Tp, bool reverse = false>
-class BidirectionIterator
-    : public Base, public iterator<bidirectional_iterator_tag, Tp>
-{
-    public:
-        BidirectionIterator() : Base() {}
-        BidirectionIterator(ConstructArgTp arg) : Base(arg) {}
-        BidirectionIterator(const BidirectionIterator& bi) : Base(bi) {}
-        virtual ~BidirectionIterator() {}
-        BidirectionIterator& operator=(const BidirectionIterator& bi)
-        {
-            Base::operator=(bi);
-            return *this;
-        }
-
-        BidirectionIterator& operator++()
-        {
-            if (reverse) Base::operator--();
-            else         Base::operator++();
-            return *this;
-        }
-        BidirectionIterator& operator--()
-        {
-            if (reverse) Base::operator++();
-            else         Base::operator--();
-            return *this;
-        }
-        BidirectionIterator operator++(int)
-        {
-            BidirectionIterator tmp(*this);
-            ++(*this);
-            return tmp;
-        }
-        BidirectionIterator operator--(int)
-        {
-            BidirectionIterator tmp(*this);
-            --(*this);
-            return tmp;
-        }
-};
 }
 
 #endif // ITERATOR_HPP
