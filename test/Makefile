@@ -1,5 +1,5 @@
 CXX = clang++
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -I../containers -I../utils
+CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -I../containers -I../utils $(ADDFLAGS)
 NAME = ft_containers
 SRCS = $(wildcard *.cpp)
 OBJS = $(SRCS:.cpp=.o)

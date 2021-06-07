@@ -62,6 +62,15 @@ void constructor2(std::stringstream& out)
 }
 
 template <class list>
+void assignation(std::stringstream& out)
+{
+    list lst(3, 42);
+    list lst2(3, 24);
+    lst2 = lst;
+    printIter(out, lst2);
+}
+
+template <class list>
 void push_back(std::stringstream& out)
 {
     list lst(0);

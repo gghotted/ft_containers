@@ -49,18 +49,33 @@ namespace   ft
             void linkNext(DoublyLinkedNode* newNode_)
             {
                 next_ = newNode_;
-                newNode_->prev_ = this;
+                if (newNode_)
+                    newNode_->prev_ = this;
             }
             void linkPrev(DoublyLinkedNode* newNode_)
             {
                 prev_ = newNode_;
-                newNode_->next_ = this;
+                if (newNode_)
+                    newNode_->next_ = this;
+            }
+
+            void insertNext(DoublyLinkedNode* newNode_)
+            {
+                newNode_->linkNext(next_);
+                linkNext(newNode_);
+            }
+
+            void insertPrev(DoublyLinkedNode* newNode_)
+            {
+                newNode_->linkPrev(prev_);
+                linkPrev(newNode_);
             }
 
             DoublyLinkedNode* getNext()
             {
                 return next_;
             }
+
             DoublyLinkedNode* getPrev()
             {
                 return prev_;
