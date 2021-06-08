@@ -132,8 +132,7 @@ class   list
         }
 
         list (const list& x)
-            : allocator_(x.allocator_),
-              size_(0)
+            : size_(0)
         {
             initDefaultNode();
             *this = x;
@@ -150,6 +149,7 @@ class   list
         /* operator */
         list& operator=(const list& x)
         {
+            allocator_ = x.allocator_;
             clear();
             const_iterator it = x.begin();
             const_iterator ite = x.end();
