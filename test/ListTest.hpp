@@ -24,6 +24,13 @@ void printIter(Out& out, Iterable& iterable)
         out << *it << ' ';
 }
 
+template <class Out, class Iterator>
+void printIter(Out& out, Iterator it, Iterator ite)
+{
+    for (; it != ite; ++it)
+        out << *it << ' ';
+}
+
 /* constructor */
 template <class list>
 void constructor0(std::stringstream& out)
@@ -95,6 +102,20 @@ void begin_end(std::stringstream& out)
 
     const list lst3(lst2);
     printIter(out, lst3);
+}
+
+/* test rbegin rend,  also const */
+template <class list>
+void rbegin_rend(std::stringstream& out)
+{
+    list lst;
+    printIter(out, lst.rbegin(), lst.rend());
+
+    list lst2(2, 42);
+    printIter(out, lst2.rbegin(), lst2.rend());
+
+    const list lst3(lst2);
+    printIter(out, lst3.rbegin(), lst3.rend());
 }
 
 template <class list>

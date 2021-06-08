@@ -18,11 +18,147 @@ template <class Category, class Tp, class Distance = std::ptrdiff_t,
 struct iterator
 {
     typedef Tp        value_type;
-    typedef Distance  differnce_type;
+    typedef Distance  difference_type;
     typedef Pointer   pointer;
     typedef Reference reference;
     typedef Category  iterator_category;
 };
+
+/* http://www.cplusplus.com/reference/iterator/reverse_iterator/ */
+/* real e 1 2 3 4 5 e  */
+/* base   1 2 3 4 5 e  */
+/* pos  e 5 4 3 2 1    */
+template <class Iterator>
+class reverse_iterator
+{
+    Iterator pos;
+
+    public:
+        typedef Iterator                             iterator_type;
+        typedef typename Iterator::iterator_category iterator_category;
+        typedef typename Iterator::value_type        value_type;
+        typedef typename Iterator::difference_type   difference_type;
+        typedef typename Iterator::pointer           pointer;
+        typedef typename Iterator::reference         reference;
+
+        reverse_iterator()
+        {
+        }
+
+        explicit reverse_iterator (iterator_type it) : pos(--it)
+        {
+        }
+
+        template <class Iter>
+        reverse_iterator (const reverse_iterator<Iter>& rev_it) : pos(rev_it.pos)
+        {
+        }
+
+        iterator_type base() const
+        {
+            iterator_type base_(pos);
+            return (++base_);
+        }
+
+        reference operator*() const
+        {
+            return *pos;
+        }
+
+        reverse_iterator operator+(difference_type n) const
+        {
+            (void)n;
+            // random access
+        }
+
+        reverse_iterator& operator++()
+        {
+            --pos;
+            return *this;
+        }
+
+        reverse_iterator  operator++(int)
+        {
+            reverse_iterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        reverse_iterator& operator+=(difference_type n)
+        {
+            (void)n;
+            // random access
+        }
+
+        reverse_iterator operator-(difference_type n) const
+        {
+            (void)n;
+            // random access
+        }
+
+        reverse_iterator& operator--()
+        {
+            ++pos;
+            return *this;
+        }
+
+        reverse_iterator  operator--(int)
+        {
+            reverse_iterator tmp = *this;
+            --(*this);
+            return tmp;
+        }
+
+        reverse_iterator& operator-= (difference_type n)
+        {
+            (void)n;
+            // random access
+        }
+
+        pointer operator->() const
+        {
+            return &(operator*());
+        }
+
+        reference operator[] (difference_type n) const
+        {
+            (void)n;
+            // random access
+        }
+
+        template <class Iter>
+        friend bool operator==(const reverse_iterator& lhs, // ??
+                               const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos == rhs.pos;
+        }
+
+        template <class Iter>
+        friend bool operator!=(const reverse_iterator& lhs, // ??
+                               const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos != rhs.pos;
+        }
+
+        // template <class Iter>
+        // bool operator<  (const reverse_iterator<Iter>& lhs,
+        //                 const reverse_iterator<Iter>& rhs);
+
+        // template <class Iter>
+        // bool operator<= (const reverse_iterator<Iter>& lhs,
+        //                 const reverse_iterator<Iter>& rhs);
+
+        // template <class Iter>
+        // bool operator>  (const reverse_iterator<Iter>& lhs,
+        //                 const reverse_iterator<Iter>& rhs);
+
+        // template <class Iter>
+        // bool operator>= (const reverse_iterator<Iter>& lhs,
+        //                 const reverse_iterator<Iter>& rhs);
+};
+
+// Non-member function overloads
+
 }
 
 #endif // ITERATOR_HPP

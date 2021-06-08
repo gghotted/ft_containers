@@ -17,7 +17,7 @@ class   list
         typedef DoublyLinkedNode<Tp> node;
 
         template <typename Tp_, bool reverse = false>
-        class ListIterator : iterator<bidirectional_iterator_tag, Tp_>
+        class ListIterator : public iterator<bidirectional_iterator_tag, Tp_>
         {
             private:
                 template<class, class> friend class list;
@@ -93,8 +93,8 @@ class   list
         typedef typename allocator_type::const_pointer   const_pointer;
         typedef ListIterator<Tp>                         iterator;
         typedef ListIterator<const Tp>                   const_iterator;
-        typedef ListIterator<Tp, true>                   reverse_iterator;
-        typedef ListIterator<const Tp, true>             const_reverse_iterator;
+        typedef ft::reverse_iterator<iterator>           reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>     const_reverse_iterator;
         typedef ptrdiff_t                                difference_type;
         typedef size_t                                   size_type;
 
@@ -187,24 +187,24 @@ class   list
         {
             if (size_ == 0)
                 return rend();
-            return reverse_iterator(endOfNode_->getPrev());
+            return reverse_iterator(endOfNode_);
         }
 
         const_reverse_iterator rbegin() const
         {
             if (size_ == 0)
                 return rend();
-            return const_reverse_iterator(endOfNode_->getPrev());
+            return const_reverse_iterator(endOfNode_);
         }
 
         reverse_iterator rend()
         {
-            return reverse_iterator(beginOfNode_);
+            return reverse_iterator(beginOfNode_->getNext());
         }
 
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator(beginOfNode_);
+            return const_reverse_iterator(beginOfNode_->getNext());
         }
 
         /* capacity */

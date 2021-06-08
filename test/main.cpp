@@ -18,10 +18,13 @@ void testList(CompareTester& ct)
     LIST_TEST(constructor1);
     LIST_TEST(constructor2);
     LIST_TEST(copyConstructor);
-    LIST_TEST(begin_end);
 
     /* operator */
     LIST_TEST(assignation);
+
+    /* iterator */
+    LIST_TEST(begin_end);
+    LIST_TEST(rbegin_rend);
 
     // LIST_TEST(push_back);
 }
