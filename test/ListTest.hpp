@@ -18,8 +18,8 @@ void keyval(Out& out, Key key, Val val)
 template <class Out, class Iterable>
 void printIter(Out& out, Iterable& iterable)
 {
-    typename Iterable::iterator it = iterable.begin();
-    typename Iterable::iterator ite = iterable.end();
+    typename Iterable::const_iterator it = iterable.begin();
+    typename Iterable::const_iterator ite = iterable.end();
     for (; it != ite; ++it)
         out << *it << ' ';
 }
@@ -62,12 +62,39 @@ void constructor2(std::stringstream& out)
 }
 
 template <class list>
+void copyConstructor(std::stringstream& out)
+{
+    list lst;
+    for (int i = 0; i < 10; i++)
+        lst.push_back(i);
+
+    list lst2(lst);
+    printIter(out, lst2);
+}
+
+/* destructor will be test in all test case */
+
+template <class list>
 void assignation(std::stringstream& out)
 {
     list lst(3, 42);
     list lst2(3, 24);
     lst2 = lst;
     printIter(out, lst2);
+}
+
+/* test begin end,  also const */
+template <class list>
+void begin_end(std::stringstream& out)
+{
+    list lst;
+    printIter(out, lst);
+
+    list lst2(2, 42);
+    printIter(out, lst2);
+
+    const list lst3(lst2);
+    printIter(out, lst3);
 }
 
 template <class list>

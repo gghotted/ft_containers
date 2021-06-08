@@ -6,6 +6,7 @@
 // #include <iterator>
 #include "DoublyLinkedNode.hpp"
 #include "Iterator.hpp"
+#include "Utils.hpp"
 
 namespace ft
 {
@@ -21,13 +22,16 @@ class   list
             private:
                 template<class, class> friend class list;
 
+                typedef typename remove_const<Tp_>::type non_const_Tp;
+                typedef ListIterator<non_const_Tp>       non_const_iterator;
+
                 node* node_;
 
             public:
-                ListIterator()                        : node_(NULL)     {}
-                ListIterator(node* node_)             : node_(node_)    {}
-                ListIterator(const ListIterator& li)  : node_(li.node_) {}
-                virtual ~ListIterator()                                 {}
+                ListIterator()                              : node_(NULL)     {}
+                ListIterator(node* node_)                   : node_(node_)    {}
+                ListIterator(const non_const_iterator& li)  : node_(li.node_) {}
+                virtual ~ListIterator()                                       {}
 
                 ListIterator& operator=(const ListIterator& li)
                 {
@@ -63,7 +67,7 @@ class   list
                     return tmp;
                 }
 
-                Tp_& operator*()
+                Tp_& operator*() const
                 {
                     return **node_;
                 }
@@ -128,6 +132,8 @@ class   list
         }
 
         list (const list& x)
+            : allocator_(x.allocator_),
+              size_(0)
         {
             initDefaultNode();
             *this = x;
