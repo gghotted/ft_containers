@@ -208,7 +208,11 @@ class   list
         }
 
         /* capacity */
-        // empty
+        bool empty() const
+        {
+            return size_ == 0;
+        }
+
         size_type size() const
         {
             return size_;
