@@ -48,8 +48,15 @@ void testList(CompareTester& ct)
     LIST_TEST(clear);
 
     /* operations */
-    // splice
+    LIST_TEST(splice0);
+    LIST_TEST(splice1);
+    LIST_TEST(splice2);
     LIST_TEST(remove);
+    LIST_TEST(remove_if);
+    LIST_TEST(unique0);
+    LIST_TEST(unique1);
+    LIST_TEST(merge0);
+    LIST_TEST(merge1);
 }
 
 int main()

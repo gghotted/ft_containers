@@ -80,6 +80,20 @@ namespace   ft
             {
                 return prev_;
             }
+
+            void swapNextLink(DoublyLinkedNode* node_)
+            {
+                DoublyLinkedNode* tmp = next_;
+                linkNext(node_->next_);
+                node_->linkNext(tmp);
+            }
+
+            void swapPrevLink(DoublyLinkedNode* node_)
+            {
+                DoublyLinkedNode* tmp = prev_;
+                linkPrev(node_->prev_);
+                node_->linkPrev(tmp);
+            }
     };
 }
 

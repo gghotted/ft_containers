@@ -97,5 +97,20 @@ void swap(Tp& lhs, Tp& rhs)
 
 }
 
+template <class Iter>
+typename Iter::difference_type distance(Iter first, Iter last)
+{
+    typename Iter::difference_type dist = 0;
+    for (; first != last; ++first, ++dist) ;
+    return dist;
+}
+
+template <class Iter>
+Iter next(Iter it, typename Iter::difference_type n = 1)
+{
+    for (typename Iter::difference_type i = 0; i < n; i++)
+        ++it;
+    return it;
+}
 
 #endif // UTILS_HPP

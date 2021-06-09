@@ -42,15 +42,13 @@ class   list
 
                 ListIterator& operator++()
                 {
-                    if (reverse) node_ = node_->getPrev();
-                    else         node_ = node_->getNext();
+                    node_ = node_->getNext();
                     return *this;
                 }
 
                 ListIterator& operator--()
                 {
-                    if (reverse) node_ = node_->getNext();
-                    else         node_ = node_->getPrev();
+                    node_ = node_->getPrev();
                     return *this;
                 }
 
@@ -314,13 +312,13 @@ class   list
             prev->linkNext(next);
             delete position.node_;
             --size_;
-            return ++position;
+            return iterator(next);
         }
 
         iterator erase(iterator first, iterator last)
         {
-            for (; first != last; ++first)
-                erase(first);
+            while (first != last)
+                first = erase(first);
             return last;
         }
 
@@ -348,17 +346,97 @@ class   list
         }
 
         /* operations */
-        // splice
-        void remove(const value_type& val)
+        void splice(iterator position, list& x)
         {
-            for (iterator begin_ = begin(); begin_ != end(); begin_++)
-                if (*begin_ == val)
-                    erase(begin_);
+            splice(position, x, x.begin(), x.end());
         }
 
-        // remove_if
-        // unique
-        // merge
+        void splice(iterator position, list& x, iterator i)
+        {
+            splice(position, x, i, next(i));
+        }
+
+        void splice(iterator position, list& x, iterator first, iterator last)
+        {
+            difference_type dist = distance(first, last);
+            position.node_->getPrev()->swapNextLink(first.node_->getPrev());
+            position.node_->swapPrevLink(last.node_);
+            x.size_ -= dist;
+            size_ += dist;
+        }
+
+        void remove(const value_type& val)
+        {
+            iterator begin_ = begin();
+            while (begin_ != end())
+            {
+                if (*begin_ == val)
+                    begin_ = erase(begin_);
+                else
+                    ++begin_;
+            }
+        }
+
+        template <class Predicate>
+        void remove_if(Predicate pred)
+        {
+            iterator begin_ = begin();
+            while (begin_ != end())
+            {
+                if (pred(*begin_))
+                    begin_ = erase(begin_);
+                else
+                    ++begin_;
+            }
+        }
+
+        void unique()
+        {
+            unique(isSame);
+        }
+
+        template <class BinaryPredicate>
+        void unique(BinaryPredicate binary_pred)
+        {
+            if (size_ <= 1)
+                return ;
+
+            iterator uniq = begin();
+            iterator pos = next(uniq);
+            while (pos != end())
+            {
+                if (binary_pred(*uniq, *pos))
+                    pos = erase(pos);
+                else
+                {
+                    ++uniq;
+                    ++pos;
+                }
+            }
+        }
+
+        void merge(list& x)
+        {
+            merge(x, valueCompare);
+        }
+
+        template <class Compare>
+        void merge(list& x, Compare comp)
+        {
+            if (&x == this)
+                return ;
+
+            iterator begin_ = begin();
+            while (begin_ != end() && x.begin() != x.end())
+            {
+                if (comp(*begin_, *x.begin()))
+                    ++begin_;
+                else
+                    splice(begin_, x, x.begin());
+            }
+            if (!x.empty())
+                splice(end(), x);
+        }
         // sort
         // reverse
 
@@ -373,6 +451,16 @@ class   list
             beginOfNode_ = new node();
             endOfNode_ = new node();
             beginOfNode_->linkNext(endOfNode_);
+        }
+
+        static bool isSame(const size_type& v1, const size_type& v2)
+        {
+            return v1 == v2;
+        }
+
+        static int valueCompare(const size_type& v1, const size_type& v2)
+        {
+            return v1 < v2;
         }
 };
 };

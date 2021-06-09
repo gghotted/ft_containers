@@ -9,6 +9,9 @@
 namespace list_test
 {
 
+const int range[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+const int nrange[] = {0, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
+
 template <class Out, class Key, class Val>
 void keyval(Out& out, Key key, Val val)
 {
@@ -29,6 +32,23 @@ void printIter(Out& out, Iterator it, Iterator ite)
 {
     for (; it != ite; ++it)
         out << *it << ' ';
+}
+
+template <int start, int end>
+bool inRange(const int& val)
+{
+    return (start <= val && val <= end);
+}
+
+template <class Tp>
+bool isSame(const Tp& v1, const Tp& v2)
+{
+    return v1 == v2;
+}
+
+int compABS(int v1, int v2)
+{
+    return std::abs(v1) < std::abs(v2);
 }
 
 /* constructor */
@@ -320,6 +340,46 @@ void clear(std::stringstream& out)
     printIter(out, lst);
 }
 
+/* operations */
+template <class list>
+void splice0(std::stringstream& out)
+{
+    list  lst(range    , range + 5 );
+    list lst2(range + 5, range + 10);
+
+    lst.splice(lst.begin(), lst2);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+    keyval(out, "size", lst2.size());
+    printIter(out, lst2);
+}
+
+template <class list>
+void splice1(std::stringstream& out)
+{
+    list  lst(range    , range + 5 );
+    list lst2(range + 5, range + 10);
+
+    lst.splice(++lst.begin(), lst2, --lst2.end());
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+    keyval(out, "size", lst2.size());
+    printIter(out, lst2);
+}
+
+template <class list>
+void splice2(std::stringstream& out)
+{
+    list  lst(range    , range + 5 );
+    list lst2(range + 5, range + 10);
+
+    lst.splice(++lst.begin(), lst2, ++lst2.begin(), --lst2.end());
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+    keyval(out, "size", lst2.size());
+    printIter(out, lst2);
+}
+
 template <class list>
 void remove(std::stringstream& out)
 {
@@ -335,6 +395,101 @@ void remove(std::stringstream& out)
     lst.remove(42);
     keyval(out, "size", lst.size());
     printIter(out, lst);
+}
+
+template <class list>
+void remove_if(std::stringstream& out)
+{
+
+    list lst(range, range + 10);
+
+    lst.remove_if(inRange<4, 7>);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.remove_if(inRange<0, 9>);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void unique0(std::stringstream& out)
+{
+
+    list lst;
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.insert(lst.end(), 5, 42);
+    lst.insert(lst.begin(), range, range + 5);
+    lst.unique();
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.clear();
+    lst.assign(42, 42);
+    lst.unique();
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void unique1(std::stringstream& out)
+{
+
+    list lst;
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.insert(lst.end(), 5, 42);
+    lst.insert(lst.begin(), range, range + 5);
+    lst.unique(isSame<int>);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.clear();
+    lst.assign(42, 42);
+    lst.unique(isSame<int>);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void merge0(std::stringstream& out)
+{
+
+    list first, second;
+
+    first.push_back (1);
+    first.push_back (2);
+    first.push_back (5);
+
+    second.assign(range, range + 10);
+    first.merge(second);
+
+    keyval(out, "size", first.size());
+    printIter(out, first);
+    keyval(out, "size", second.size());
+    printIter(out, second);
+}
+
+template <class list>
+void merge1(std::stringstream& out)
+{
+
+    list first, second;
+
+    first.push_back (1);
+    first.push_back (2);
+    first.push_back (5);
+
+    second.assign(nrange, nrange + 10);
+    first.merge(second, compABS);
+
+    keyval(out, "size", first.size());
+    printIter(out, first);
+    keyval(out, "size", second.size());
+    printIter(out, second);
 }
 
 }
