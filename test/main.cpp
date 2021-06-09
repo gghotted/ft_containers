@@ -26,6 +26,8 @@ void testList(CompareTester& ct)
     LIST_TEST(begin_end);
     LIST_TEST(rbegin_rend);
 
+    /* capacity */
+    LIST_TEST(empty);
     // LIST_TEST(push_back);
 }
 
@@ -35,5 +37,6 @@ int main()
     ct.setPrintOnPass(true);
 
     testList(ct);
+    ct.printTotalScore();
     system("leaks ft_containers");
 }

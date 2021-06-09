@@ -47,6 +47,7 @@ class CompareTester
         void fail(const std::string& lhsName, const std::string& rhsName);
         void pass(const std::string& lhsName, const std::string& rhsName);
         void setPrintOnPass(bool val);
+        void printTotalScore();
 };
 
 #endif // COMPARETESTER_HPP

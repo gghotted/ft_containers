@@ -57,3 +57,10 @@ void CompareTester::setPrintOnPass(bool val)
     printOnPass = val;
 }
 
+void CompareTester::printTotalScore()
+{
+    std::string color = (cntRun == cntPass) ? green : red;
+    std::cout << color << "Total: [ " << cntPass << " / " << cntRun << " ]"
+              << noColor << '\n';
+}
+

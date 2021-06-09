@@ -90,6 +90,7 @@ void assignation(std::stringstream& out)
     printIter(out, lst2);
 }
 
+/* iterator */
 /* test begin end,  also const */
 template <class list>
 void begin_end(std::stringstream& out)
@@ -117,6 +118,21 @@ void rbegin_rend(std::stringstream& out)
     const list lst3(lst2);
     printIter(out, lst3.rbegin(), lst3.rend());
 }
+
+/* capacity */
+template <class list>
+void empty(std::stringstream& out)
+{
+    list lst;
+    out << lst.empty();
+
+    list lst2(0);
+    out << lst2.empty();
+
+    lst.push_back(42);
+    out << lst.empty();
+}
+
 
 template <class list>
 void push_back(std::stringstream& out)
