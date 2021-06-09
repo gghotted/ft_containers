@@ -33,7 +33,10 @@ void testList(CompareTester& ct)
     /* modifiers */
     LIST_TEST(assign0);
     LIST_TEST(assign1);
-    // LIST_TEST(push_back);
+    LIST_TEST(push_front);
+    LIST_TEST(pop_front);
+    LIST_TEST(push_back);
+    LIST_TEST(pop_back);
 }
 
 int main()

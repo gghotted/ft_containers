@@ -259,13 +259,26 @@ class   list
                 push_back(val);
         }
 
-        // push_front
-        // pop_front
+        void push_front (const value_type & val_)
+        {
+            beginOfNode_->insertNext(new node(val_));
+            size_++;
+        }
+
+        void pop_front()
+        {
+            node* begin_ = beginOfNode_->getNext();
+            beginOfNode_->linkNext(begin_->getNext());
+            delete begin_;
+            size_--;
+        }
+
         void push_back(const value_type& val_)
         {
             endOfNode_->insertPrev(new node(val_));
             size_++;
         }
+
         void pop_back()
         {
             node* end_ = endOfNode_->getPrev();

@@ -167,14 +167,50 @@ void assign1(std::stringstream &out)
     printIter(out, lst);
 }
 
+template <class list>
+void push_front(std::stringstream& out)
+{
+    list lst;
+
+    lst.push_front(0);
+    lst.push_front(1);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void pop_front(std::stringstream& out)
+{
+    list lst;
+
+    lst.push_front(0);
+    lst.push_front(1);
+    lst.pop_front();
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
 
 template <class list>
 void push_back(std::stringstream& out)
 {
-    list lst(0);
+    list lst;
 
-    lst.push_back(42);
-    out << lst.front();
+    lst.push_back(0);
+    lst.push_back(1);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void pop_back(std::stringstream& out)
+{
+    list lst;
+
+    lst.push_front(0);
+    lst.push_front(1);
+    lst.pop_back();
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
 }
 
 }
