@@ -249,5 +249,93 @@ void insert2(std::stringstream& out)
     printIter(out, lst2);
 }
 
+template <class list>
+void erase0(std::stringstream& out)
+{
+    list lst;
+    for (int i = 0; i < 5; i++)
+        lst.push_back(i);
+    lst.erase(--lst.end());
+    typename list::iterator it = lst.erase(lst.begin());
+    lst.erase(it);
+
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void erase1(std::stringstream& out)
+{
+    list lst;
+    for (int i = 0; i < 5; i++)
+        lst.push_back(i);
+    typename list::iterator it = lst.erase(lst.begin(), --lst.end());
+
+    keyval(out, "size", lst.size());
+    keyval(out, "next", *it);
+}
+
+template <class list>
+void swap(std::stringstream& out)
+{
+    list lst(5, 42);
+    list lst2(3, -1);
+
+    lst.swap(lst2);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+    keyval(out, "size", lst2.size());
+    printIter(out, lst2);
+}
+
+template <class list>
+void resize(std::stringstream& out)
+{
+    list lst(2);
+
+    lst.resize(4, 1);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.resize(6, 2);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.resize(0);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void clear(std::stringstream& out)
+{
+    list lst;
+    lst.clear();
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+
+    lst.assign(10, 5);
+    lst.clear();
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
+template <class list>
+void remove(std::stringstream& out)
+{
+
+    list lst;
+
+    lst.push_back(0);
+    lst.push_back(42);
+    lst.push_back(1);
+    lst.push_back(42);
+    lst.push_back(2);
+    lst.push_back(42);
+    lst.remove(42);
+    keyval(out, "size", lst.size());
+    printIter(out, lst);
+}
+
 }
 #endif // LISTTESTER_HPP

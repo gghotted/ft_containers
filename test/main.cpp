@@ -41,6 +41,15 @@ void testList(CompareTester& ct)
     LIST_TEST(insert0);
     LIST_TEST(insert1);
     LIST_TEST(insert2);
+    LIST_TEST(erase0);
+    LIST_TEST(erase1);
+    LIST_TEST(swap);
+    LIST_TEST(resize);
+    LIST_TEST(clear);
+
+    /* operations */
+    // splice
+    LIST_TEST(remove);
 }
 
 int main()

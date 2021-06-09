@@ -307,13 +307,40 @@ class   list
                 insert(position, *first);
         }
 
-        iterator erase (iterator position)
+        iterator erase(iterator position)
         {
-            (void)position.node_;
-            return position;
+            node* prev = position.node_->getPrev();
+            node* next = position.node_->getNext();
+            prev->linkNext(next);
+            delete position.node_;
+            --size_;
+            return ++position;
         }
-        // swap
-        // resize
+
+        iterator erase(iterator first, iterator last)
+        {
+            for (; first != last; ++first)
+                erase(first);
+            return last;
+        }
+
+        void swap(list& x)
+        {
+            ft::swap(beginOfNode_, x.beginOfNode_);
+            ft::swap(endOfNode_, x.endOfNode_);
+            ft::swap(size_, x.size_);
+        }
+
+        void resize(size_type n, value_type val = value_type())
+        {
+            if (size_ < n)
+                while (size_ != n)
+                    push_back(val);
+            else
+                while (size_ != n)
+                    pop_back();
+        }
+
         void clear()
         {
             while (size_)
@@ -322,7 +349,13 @@ class   list
 
         /* operations */
         // splice
-        // remove
+        void remove(const value_type& val)
+        {
+            for (iterator begin_ = begin(); begin_ != end(); begin_++)
+                if (*begin_ == val)
+                    erase(begin_);
+        }
+
         // remove_if
         // unique
         // merge
