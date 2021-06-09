@@ -2,6 +2,7 @@
 #define LIST_HPP
 
 #include <memory>
+#include <limits>
 // #include <list>
 // #include <iterator>
 #include "DoublyLinkedNode.hpp"
@@ -217,7 +218,10 @@ class   list
         {
             return size_;
         }
-        // max_size
+        size_type max_size () const
+        {
+            return std::numeric_limits<difference_type>::max(); // ??
+        }
 
         /* element access */
         reference       front()

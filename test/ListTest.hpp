@@ -133,6 +133,14 @@ void empty(std::stringstream& out)
     out << lst.empty();
 }
 
+template <class list>
+void max_size(std::stringstream &out)
+{
+    list lst;
+    out << CompareTester::DontNeedToSame << "-> ";
+    keyval(out, "max_size", lst.max_size());
+}
+
 
 template <class list>
 void push_back(std::stringstream& out)

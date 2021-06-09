@@ -18,6 +18,8 @@ class CompareTester
     static const std::string noColor;
 
     public:
+        static const std::string DontNeedToSame;
+
         ~CompareTester();
         CompareTester();
         CompareTester(const CompareTester& ct);
@@ -35,7 +37,8 @@ class CompareTester
 
             lhs(lhsResult);
             rhs(rhsResult);
-            if (lhsResult.str().compare(rhsResult.str()) == 0)
+            if (lhsResult.str().compare(rhsResult.str()) == 0 ||
+                lhsResult.str().find(DontNeedToSame) == 0)
                 pass(lhsName, rhsName);
             else
                 fail(lhsName, rhsName);

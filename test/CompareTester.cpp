@@ -4,6 +4,8 @@ const std::string CompareTester::red = "\033[31m";
 const std::string CompareTester::green = "\033[32m";
 const std::string CompareTester::noColor = "\033[0m";
 
+const std::string CompareTester::DontNeedToSame = "don't have to be the same";
+
 CompareTester::~CompareTester()
 {
 }

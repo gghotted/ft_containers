@@ -28,6 +28,7 @@ void testList(CompareTester& ct)
 
     /* capacity */
     LIST_TEST(empty);
+    LIST_TEST(max_size);
     // LIST_TEST(push_back);
 }
 
