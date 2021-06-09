@@ -286,7 +286,27 @@ class   list
             delete end_;
             size_--;
         }
-        // insert
+
+        iterator insert(iterator position, const value_type& val_)
+        {
+            position.node_->insertPrev(new node(val_));
+            size_++;
+            return iterator(position.node_->getPrev());
+        }
+        void insert(iterator position, size_type n, const value_type& val_)
+        {
+            for (size_type i = 0; i < n; i++)
+                insert(position, val_);
+        }
+
+        template <class InputIterator>
+        void insert(iterator position, InputIterator first, InputIterator last,
+                    typename disable_if<is_integral<InputIterator>::value>::type* = 0)
+        {
+            for (; first != last; first++)
+                insert(position, *first);
+        }
+
         iterator erase (iterator position)
         {
             (void)position.node_;

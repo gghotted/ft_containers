@@ -12,6 +12,7 @@ void testList(CompareTester& ct)
 {
     typedef std::list<int>  STD;
     typedef ft::list<int>   FT;
+    STD lst;
 
     /* constructor */
     LIST_TEST(constructor0);
@@ -37,6 +38,9 @@ void testList(CompareTester& ct)
     LIST_TEST(pop_front);
     LIST_TEST(push_back);
     LIST_TEST(pop_back);
+    LIST_TEST(insert0);
+    LIST_TEST(insert1);
+    LIST_TEST(insert2);
 }
 
 int main()

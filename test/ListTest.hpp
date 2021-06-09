@@ -213,5 +213,41 @@ void pop_back(std::stringstream& out)
     printIter(out, lst);
 }
 
+template <class list>
+void insert0(std::stringstream& out)
+{
+    list lst;
+    typename list::iterator it = lst.insert(lst.end(), 42);
+    printIter(out, lst);
+
+    lst.insert(it, 24);
+    printIter(out, lst);
+
+    keyval(out, "size", lst.size());
+}
+
+template <class list>
+void insert1(std::stringstream& out)
+{
+    list lst(10, 42);
+    typename list::iterator it = lst.begin();
+    ++it;
+    lst.insert(it, 3, 0);
+    printIter(out, lst);
+}
+
+template <class list>
+void insert2(std::stringstream& out)
+{
+    list lst(10, 42);
+    list lst2;
+    lst2.insert(lst2.end(), lst.begin(), lst.end());
+
+    int arr[] = {1, 2, 3};
+    lst2.insert(lst2.end(), arr, arr + 3);
+
+    printIter(out, lst2);
+}
+
 }
 #endif // LISTTESTER_HPP
