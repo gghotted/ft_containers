@@ -63,9 +63,12 @@ void constructor2(std::stringstream& out)
     list lst;
     for (int i = 0; i < 10; i++)
         lst.push_back(i);
-
     list lst2(lst.begin(), lst.end());
     printIter(out, lst2);
+
+    int arr[] = {42, 24, 0};
+    list lst3(arr, arr + 3);
+    printIter(out, lst3);
 }
 
 template <class list>
@@ -139,6 +142,29 @@ void max_size(std::stringstream &out)
     list lst;
     out << CompareTester::DontNeedToSame << "-> ";
     keyval(out, "max_size", lst.max_size());
+}
+
+/* modifiers */
+template <class list>
+void assign0(std::stringstream &out)
+{
+    list lst(10, 42);
+    list lst2;
+    lst2.assign(lst.begin(), lst.end());
+    printIter(out, lst2);
+
+    int arr[] = {1, 2 ,3};
+    lst2.assign(arr, arr + 3);
+    printIter(out, lst2);
+}
+
+template <class list>
+void assign1(std::stringstream &out)
+{
+    list lst(5);
+
+    lst.assign(10, 42);
+    printIter(out, lst);
 }
 
 

@@ -29,6 +29,10 @@ void testList(CompareTester& ct)
     /* capacity */
     LIST_TEST(empty);
     LIST_TEST(max_size);
+
+    /* modifiers */
+    LIST_TEST(assign0);
+    LIST_TEST(assign1);
     // LIST_TEST(push_back);
 }
 

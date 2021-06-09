@@ -123,12 +123,12 @@ class   list
         list(
             InputIterator first, InputIterator last,
             const allocator_type& alloc_ = allocator_type(),
-            typename InputIterator::iterator_category* = 0) /* enable_if : void* = 0 */
+            typename disable_if<is_integral<InputIterator>::value>::type* = 0)
             : allocator_(alloc_),
               size_(0)
         {
             initDefaultNode();
-            for (; first != last; first++)
+            for (; first != last; ++first)
                 push_back(*first);
         }
 
@@ -243,7 +243,22 @@ class   list
 
 
         /* modifiers */
-        // assign
+        template <class InputIterator>
+        void assign (InputIterator first, InputIterator last,
+                     typename disable_if<is_integral<InputIterator>::value>::type* = 0)
+        {
+            clear();
+            for (; first != last; ++first)
+                push_back(*first);
+        }
+
+        void assign (size_type n, const value_type& val)
+        {
+            clear();
+            for (size_type i = 0; i < n; i++)
+                push_back(val);
+        }
+
         // push_front
         // pop_front
         void push_back(const value_type& val_)
