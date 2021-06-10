@@ -484,6 +484,80 @@ class   list
             return v1 < v2;
         }
 };
+
+template <class T, class Alloc>
+void swap(list<T,Alloc>& x, list<T,Alloc>& y)
+{
+    x.swap(y);
+}
+
+template <class T, class Alloc>
+bool operator==(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    typename list<T,Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end())
+    {
+        if (*lit != *rit)
+            return false;
+        ++lit;
+        ++rit;
+    }
+    return true;
+}
+
+template <class T, class Alloc>
+bool operator!=(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <class T, class Alloc>
+bool operator<(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
+{
+    typename list<T,Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end() && rit != rhs.end())
+    {
+        if (*lit > *rit)
+            return false;
+        if (*lit < *rit)
+            return true;
+        ++lit;
+        ++rit;
+    }
+    return (lit == lhs.end()) && (rit != rhs.end());
+}
+
+template <class T, class Alloc>
+bool operator<= (const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
+{
+    return (lhs < rhs) || (lhs == rhs);
+}
+
+template <class T, class Alloc>
+bool operator>(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
+{
+    typename list<T,Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end() && rit != rhs.end())
+    {
+        if (*lit < *rit)
+            return false;
+        if (*lit > *rit)
+            return true;
+        ++lit;
+        ++rit;
+    }
+    return (lit != lhs.end()) && (rit == rhs.end());
+}
+
+template <class T, class Alloc>
+bool operator>=(const list<T,Alloc>& lhs, const list<T,Alloc>& rhs)
+{
+    return (lhs > rhs) || (lhs == rhs);
+}
+
 };
 
 #endif // LIST_HPP
