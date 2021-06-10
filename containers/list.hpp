@@ -417,7 +417,7 @@ class   list
 
         void merge(list& x)
         {
-            merge(x, valueCompare);
+            merge(x, isLess);
         }
 
         template <class Compare>
@@ -437,8 +437,29 @@ class   list
             if (!x.empty())
                 splice(end(), x);
         }
-        // sort
-        // reverse
+
+        void sort()
+        {
+            sort(isLess);
+        }
+
+        template <class Compare>
+        void sort (Compare comp)
+        {
+            for (iterator first = begin(); first != end(); ++first)
+                for (iterator second = next(first); second != end(); ++second)
+                    if (!comp(*first, *second))
+                        ft::swap(*first, *second);
+        }
+
+        void reverse()
+        {
+            size_type cnt = size_ / 2;
+            iterator first = begin();
+            iterator last  = --end();
+            for (size_type i = 0; i < cnt; i++, ++first, --last)
+                ft::swap(*first, *last);
+        }
 
     private:
         allocator_type allocator_;
@@ -458,7 +479,7 @@ class   list
             return v1 == v2;
         }
 
-        static int valueCompare(const size_type& v1, const size_type& v2)
+        static bool isLess(const size_type& v1, const size_type& v2)
         {
             return v1 < v2;
         }

@@ -95,8 +95,6 @@ void swap(Tp& lhs, Tp& rhs)
     rhs = tmp;
 }
 
-}
-
 template <class Iter>
 typename Iter::difference_type distance(Iter first, Iter last)
 {
@@ -111,6 +109,8 @@ Iter next(Iter it, typename Iter::difference_type n = 1)
     for (typename Iter::difference_type i = 0; i < n; i++)
         ++it;
     return it;
+}
+
 }
 
 #endif // UTILS_HPP
