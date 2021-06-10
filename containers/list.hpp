@@ -71,12 +71,12 @@ class   list
                     return **node_;
                 }
 
-                bool operator==(const ListIterator& rhs) const
+                bool operator==(const ListIterator& rhs) const // ?
                 {
                     return (node_ == rhs.node_);
                 }
 
-                bool operator!=(const ListIterator& rhs) const
+                bool operator!=(const ListIterator& rhs) const // ?
                 {
                     return (node_ != rhs.node_);
                 }
@@ -459,6 +459,11 @@ class   list
             iterator last  = --end();
             for (size_type i = 0; i < cnt; i++, ++first, --last)
                 ft::swap(*first, *last);
+        }
+
+        allocator_type get_allocator() const
+        {
+            return allocator_;
         }
 
     private:
