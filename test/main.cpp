@@ -12,7 +12,6 @@ void testList(CompareTester& ct)
 {
     typedef std::list<int>  STD;
     typedef ft::list<int>   FT;
-    STD lst;
 
     /* constructor */
     LIST_TEST(constructor0);
@@ -56,6 +55,13 @@ void testList(CompareTester& ct)
     LIST_TEST(unique0);
     LIST_TEST(unique1);
     LIST_TEST(merge0);
+}
+
+void testListDouble(CompareTester& ct)
+{
+    typedef std::list<double>  STD;
+    typedef ft::list<double>   FT;
+
     LIST_TEST(merge1);
 }
 
@@ -65,6 +71,7 @@ int main()
     ct.setPrintOnPass(true);
 
     testList(ct);
+    testListDouble(ct);
     ct.printTotalScore();
     system("leaks ft_containers");
 }

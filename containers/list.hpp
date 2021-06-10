@@ -17,7 +17,7 @@ class   list
     private:
         typedef DoublyLinkedNode<Tp> node;
 
-        template <typename Tp_, bool reverse = false>
+        template <typename Tp_>
         class ListIterator : public iterator<bidirectional_iterator_tag, Tp_>
         {
             private:
@@ -429,10 +429,10 @@ class   list
             iterator begin_ = begin();
             while (begin_ != end() && x.begin() != x.end())
             {
-                if (comp(*begin_, *x.begin()))
-                    ++begin_;
-                else
+                if (comp(*x.begin(), *begin_))
                     splice(begin_, x, x.begin());
+                else
+                    ++begin_;
             }
             if (!x.empty())
                 splice(end(), x);

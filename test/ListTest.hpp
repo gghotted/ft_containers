@@ -473,19 +473,27 @@ void merge0(std::stringstream& out)
     printIter(out, second);
 }
 
+
+/* double */
+
+bool mycomparison (double first, double second)
+{ return ( int(first)<int(second) ); }
+
 template <class list>
 void merge1(std::stringstream& out)
 {
 
     list first, second;
 
-    first.push_back (1);
-    first.push_back (2);
-    first.push_back (5);
+    first.push_back(1.4);
+    first.push_back(2.2);
+    first.push_back(2.9);
+    first.push_back(3.1);
+    first.push_back(3.7);
+    first.push_back(7.1);
+    second.push_back(2.1);
 
-    second.assign(nrange, nrange + 10);
-    first.merge(second, compABS);
-
+    first.merge(second, mycomparison);
     keyval(out, "size", first.size());
     printIter(out, first);
     keyval(out, "size", second.size());
