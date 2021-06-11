@@ -20,6 +20,14 @@ class   list
         template <typename Tp_>
         class ListIterator : public iterator<bidirectional_iterator_tag, Tp_>
         {
+            public:
+                typedef iterator<bidirectional_iterator_tag, Tp_> base;
+                typedef typename base::iterator_category          iterator_category;
+                typedef typename base::value_type                 value_type;
+                typedef typename base::difference_type            difference_type;
+                typedef typename base::pointer                    pointer;
+                typedef typename base::reference                  reference;
+
             private:
                 template<class, class> friend class list;
 
@@ -66,9 +74,14 @@ class   list
                     return tmp;
                 }
 
-                Tp_& operator*() const
+                reference operator*() const
                 {
                     return **node_;
+                }
+
+                pointer operator->() const
+                {
+                    return &(operator*());
                 }
 
                 bool operator==(const ListIterator& rhs) const // ?
