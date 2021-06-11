@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <stdexcept>
-#include "iterator.hpp"
+#include "Iterator.hpp"
 
 namespace ft
 {
@@ -35,7 +35,7 @@ class vector
                 VectorIterator() : ptr_(NULL) {}
                 VectorIterator(pointer ptr_) : ptr_(ptr_) {}
                 VectorIterator(const non_const_iterator& vi) : ptr_(vi.ptr_) {}
-                virtual ~VectorIterator()
+                virtual ~VectorIterator() {}
 
                 VectorIterator& operator=(const VectorIterator& vi)
                 {
@@ -143,12 +143,6 @@ class vector
                 }
         };
 
-        template <class Tp_>
-        VectorIterator<Tp_> operator+(typename VectorIterator<Tp_>::difference_type n, const VectorIterator<Tp_>& v)
-        {
-            return (v + n);
-        }
-
     public:
         /* member type */
         typedef Tp                                       value_type;
@@ -180,20 +174,22 @@ class vector
               capacity_(0),
               data_(NULL)
         {
+            reserve(n);
             for (size_type i = 0; i < n; i++)
                 push_back(val);
         }
 
         template <class InputIterator>
         vector(InputIterator first, InputIterator last,
-               const allocator_type& alloc = allocator_type())
+               const allocator_type& alloc = allocator_type(),
+               typename disable_if<is_integral<InputIterator>::value>::type* = 0)
             : allocator_(alloc),
               size_(0),
               capacity_(0),
               data_(NULL)
         {
-            for (; first != last; ++first)
-                push_back(*first);
+            reserve(last - first);
+            push_back(first, last);
         }
 
         vector(const vector& x)
@@ -208,32 +204,29 @@ class vector
         /* destructor */
         ~vector()
         {
-            if (data_)
-                allocator_._deallocate(data_, capacity_);
+            destroyData();
         }
 
         /* operator */
         vector& operator=(const vector& x)
         {
             allocator_ = x.allocator_;
+            capacity_ = x.capacity_;
             clear();
-            const_iterator it = x.begin();
-            const_iterator ite = x.end();
-            for (; it != ite; ++it)
-                push_back(*it);
+            push_back(x.begin(), x.end());
             return *this;
         }
 
         /* iterator */
         iterator begin()
         {
-            if (data_) return iterator(data_);
+            if (data_) return iterator(&front());
             else       return iterator(NULL);
         }
 
         const_iterator begin() const
         {
-            if (data_) return const_iterator(data_);
+            if (data_) return const_iterator(&front());
             else       return const_iterator(NULL);
         }
 
@@ -310,11 +303,7 @@ class vector
                 throw std::length_error("lengh error");
             if (n <= capacity_)
                 return ;
-            pointer newData = allocator_.allocate(n);
-            copy(begin(), end(), newData);
-            if (data_)
-                allocator_.dallocate(data_, capacity_);
-            data_ = newData;
+            moveData(new value_type[n]);
             capacity_ = n;
         }
 
@@ -329,14 +318,14 @@ class vector
             return data_[n];
         }
 
-        reference at (size_type n)
+        reference at(size_type n)
         {
             if (n >= size_)
                 throw std::out_of_range("out of range");
             return data_[n];
         }
 
-        const_reference at (size_type n) const;
+        const_reference at(size_type n) const
         {
             if (n >= size_)
                 throw std::out_of_range("out of range");
@@ -348,7 +337,7 @@ class vector
             return data_[0];
         }
 
-        const_reference front() const;
+        const_reference front() const
         {
             return data_[0];
         }
@@ -357,7 +346,7 @@ class vector
             return data_[size_ - 1];
         }
 
-        const_reference back() const;
+        const_reference back() const
         {
             return data_[size_ - 1];
         }
@@ -367,20 +356,19 @@ class vector
         void assign(InputIterator first, InputIterator last)
         {
             clear();
-            for (; first != last; ++first)
-                push_back(*first);
+            push_back(first, last);
         }
 
-        void assign (size_type n, const value_type& val)
+        void assign(size_type n, const value_type& val)
         {
-            clear()
+            clear();
             for (size_type i = 0; i < n; i++)
                 push_back(val);
         }
 
         void push_back(const value_type& val)
         {
-            doubling(1);
+            doubling(size_ + 1);
             data_[size_++] = val;
         }
 
@@ -398,13 +386,11 @@ class vector
         void insert(iterator position, size_type n, const value_type& val)
         {
             difference_type idx = position - begin();
-            doubling(n);
+            doubling(size_ + n);
             position = iterator(data_ + idx);
             shiftRight(position, n);
-            fill(position, postion + n, val);
+            fill(position, position + n, val);
             size_ += n;
-            // rangeIterator rit(val, n);
-            // insert(position, rit.begin(), rit.end());
         }
 
         template <class InputIterator>
@@ -412,7 +398,7 @@ class vector
         {
             difference_type n = last - first;
             difference_type idx = position - begin();
-            doubling(n);
+            doubling(size_ + n);
             position = iterator(data_ + idx);
             shiftRight(position, n);
             fill(position, first, last);
@@ -421,19 +407,15 @@ class vector
 
         iterator erase(iterator position)
         {
-            allocator_.destroy(&*position);
             shiftLeft(position + 1, 1);
-            --size_;
+            pop_back();
             return position;
         }
 
         iterator erase(iterator first, iterator last)
         {
-            difference_type n = last - first;
-            for (difference_type i = 0; i < n; i++)
-                allocator_.destroy(&first[i]);
-            shiftLeft(last, n);
-            size_ -= n;
+            shiftLeft(last, last - first);
+            pop_back(last - first);
             return first;
         }
 
@@ -462,11 +444,6 @@ class vector
         size_type      capacity_;
         pointer        data_;
 
-        bool appendable(size_type n = 1)
-        {
-            return (size_ + n <= capacity_);
-        }
-
         void doubling()
         {
             if (capacity_ == 0)
@@ -475,10 +452,9 @@ class vector
                 reserve(capacity_ * 2);
         }
 
-        // doubling until appendable n
-        void doubling(size_type n)
+        void doubling(size_type requireMin)
         {
-            while (appendable(n) == false)
+            while (capacity_ < requireMin)
                 doubling();
         }
 
@@ -491,7 +467,46 @@ class vector
         {
             copy(position, end(), position - n);
         }
+
+        void moveData(pointer newSpace)
+        {
+            if (!data_)
+            {
+                data_ = newSpace;
+                return ;
+            }
+            copy(begin(), end(), newSpace);
+            destroyData();
+            data_ = newSpace;
+        }
+
+        void destroyData()
+        {
+            if (!data_)
+                return ;
+            clear();
+            allocator_.deallocate(data_, capacity_);
+        }
+
+        template <class InputIterator>
+        void push_back(InputIterator first, InputIterator last)
+        {
+            for (; first != last; ++first)
+                push_back(*first);
+        }
+
+        void pop_back(size_type n)
+        {
+            for (size_type i = 0; i < n; i++)
+                pop_back();
+        }
 };
+
+template <class Tp>
+typename vector<Tp>::iterator operator+(typename vector<Tp>::iterator::difference_type n, const typename vector<Tp>::iterator& v)
+{
+    return (v + n);
+}
 
 }
 

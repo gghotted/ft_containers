@@ -112,10 +112,11 @@ Iter next(Iter it, typename Iter::difference_type n = 1)
 }
 
 template <class InputIterator, class OutputIterator>
-OutputIterator copy (InputIterator first, InputIterator last, OutputIterator result)
+OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result)
 {
     for (; first != last; ++first, ++result)
         *result = *first;
+    return (result - 1);
 }
 
 template <class ForwardIterator, class T>
@@ -129,7 +130,7 @@ template <class OutIter, class InIter>
 void fill(OutIter res, InIter first, InIter last,
           typename disable_if<is_integral<InIter>::value>::type* = 0)
 {
-    for (; first != last; ++first; ++res)
+    for (; first != last; ++first, ++res)
         *res = *first;
 }
 
