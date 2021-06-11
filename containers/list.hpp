@@ -14,7 +14,7 @@ namespace ft
 template <typename Tp, class Alloc = std::allocator<Tp> >
 class   list
 {
-    private:
+    public:
         typedef DoublyLinkedNode<Tp> node;
 
         template <typename Tp_>

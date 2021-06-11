@@ -111,6 +111,28 @@ Iter next(Iter it, typename Iter::difference_type n = 1)
     return it;
 }
 
+template <class InputIterator, class OutputIterator>
+OutputIterator copy (InputIterator first, InputIterator last, OutputIterator result)
+{
+    for (; first != last; ++first, ++result)
+        *result = *first;
+}
+
+template <class ForwardIterator, class T>
+void fill(ForwardIterator first, ForwardIterator last, const T& val)
+{
+    for (; first != last; ++first)
+        *first = val;
+}
+
+template <class OutIter, class InIter>
+void fill(OutIter res, InIter first, InIter last,
+          typename disable_if<is_integral<InIter>::value>::type* = 0)
+{
+    for (; first != last; ++first; ++res)
+        *res = *first;
+}
+
 }
 
 #endif // UTILS_HPP
