@@ -193,7 +193,7 @@ class vector
         }
 
         vector(const vector& x)
-            : allocator_(x.alloc),
+            : allocator_(x.allocator_),
               size_(0),
               capacity_(0),
               data_(NULL)
@@ -204,14 +204,14 @@ class vector
         /* destructor */
         ~vector()
         {
-            destroyData();
+            delete[] data_;
         }
 
         /* operator */
         vector& operator=(const vector& x)
         {
             allocator_ = x.allocator_;
-            capacity_ = x.capacity_;
+            reserve(x.size_);
             clear();
             push_back(x.begin(), x.end());
             return *this;
@@ -244,25 +244,25 @@ class vector
 
         reverse_iterator rbegin()
         {
-            if (data_) return reverse_iterator(&back());
+            if (data_) return reverse_iterator(&back() + 1);
             else       return reverse_iterator(NULL);
         }
 
         const_reverse_iterator rbegin() const
         {
-            if (data_) return const_reverse_iterator(&back());
+            if (data_) return const_reverse_iterator(&back() + 1);
             else       return const_reverse_iterator(NULL);
         }
 
         reverse_iterator rend()
         {
-            if (data_) return reverse_iterator(&front() - 1);
+            if (data_) return reverse_iterator(&front());
             else       return reverse_iterator(NULL);
         }
 
         const_reverse_iterator rend() const
         {
-            if (data_) return const_reverse_iterator(&front() - 1);
+            if (data_) return const_reverse_iterator(&front());
             else       return const_reverse_iterator(NULL);
         }
 
@@ -353,15 +353,18 @@ class vector
 
         /* modifiers */
         template <class InputIterator>
-        void assign(InputIterator first, InputIterator last)
+        void assign(InputIterator first, InputIterator last,
+                    typename disable_if<is_integral<InputIterator>::value>::type* = 0)
         {
             clear();
+            reserve(last - first);
             push_back(first, last);
         }
 
         void assign(size_type n, const value_type& val)
         {
             clear();
+            reserve(n);
             for (size_type i = 0; i < n; i++)
                 push_back(val);
         }
@@ -374,19 +377,22 @@ class vector
 
         void pop_back()
         {
-            allocator_.destroy(&back());
+            if (empty())
+                return ;
             --size_;
         }
 
         iterator insert(iterator position, const value_type& val)
         {
+            difference_type idx = position - begin();
             insert(position, 1, val);
+            return iterator(&at(idx));
         }
 
         void insert(iterator position, size_type n, const value_type& val)
         {
             difference_type idx = position - begin();
-            doubling(size_ + n);
+            reserve(size_ + n);
             position = iterator(data_ + idx);
             shiftRight(position, n);
             fill(position, position + n, val);
@@ -394,11 +400,12 @@ class vector
         }
 
         template <class InputIterator>
-        void insert(iterator position, InputIterator first, InputIterator last)
+        void insert(iterator position, InputIterator first, InputIterator last,
+                    typename disable_if<is_integral<InputIterator>::value>::type* = 0)
         {
             difference_type n = last - first;
             difference_type idx = position - begin();
-            doubling(size_ + n);
+            reserve(size_ + n);
             position = iterator(data_ + idx);
             shiftRight(position, n);
             fill(position, first, last);
@@ -421,6 +428,7 @@ class vector
 
         void swap(vector& x)
         {
+            ft::swap(allocator_, allocator_);
             ft::swap(size_, x.size_);
             ft::swap(capacity_, x.capacity_);
             ft::swap(data_, x.data_);
@@ -428,8 +436,7 @@ class vector
 
         void clear()
         {
-            while (size_)
-                pop_back();
+            size_ = 0;
         }
 
         /* allocator */
@@ -476,16 +483,8 @@ class vector
                 return ;
             }
             copy(begin(), end(), newSpace);
-            destroyData();
+            delete[] data_;
             data_ = newSpace;
-        }
-
-        void destroyData()
-        {
-            if (!data_)
-                return ;
-            clear();
-            allocator_.deallocate(data_, capacity_);
         }
 
         template <class InputIterator>

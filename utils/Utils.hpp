@@ -127,8 +127,7 @@ void fill(ForwardIterator first, ForwardIterator last, const T& val)
 }
 
 template <class OutIter, class InIter>
-void fill(OutIter res, InIter first, InIter last,
-          typename disable_if<is_integral<InIter>::value>::type* = 0)
+void fill(OutIter res, InIter first, InIter last)
 {
     for (; first != last; ++first, ++res)
         *res = *first;
