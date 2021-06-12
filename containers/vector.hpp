@@ -385,8 +385,12 @@ class vector
         iterator insert(iterator position, const value_type& val)
         {
             difference_type idx = position - begin();
-            insert(position, 1, val);
-            return iterator(&at(idx));
+            doubling(size_ + 1);
+            position = iterator(data_ + idx);
+            shiftRight(position, 1);
+            *position = val;
+            size_ += 1;
+            return position;
         }
 
         void insert(iterator position, size_type n, const value_type& val)
