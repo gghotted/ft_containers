@@ -43,24 +43,24 @@ bool operator!= (const reverse_iterator<Iterator>& lhs, const reverse_iterator<I
 template <class Iterator>
 bool operator<  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
 {
-    return lhs.pos < rhs.pos;
+    return lhs.pos > rhs.pos;
 }
 
 template <class Iterator>
 bool operator<= (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
 {
-    return lhs.pos <= rhs.pos;
+    return lhs.pos >= rhs.pos;
 }
 
 template <class Iterator>
 bool operator>  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
 {
-    return lhs.pos > rhs.pos;
+    return lhs.pos < rhs.pos;
 }
 template <class Iterator>
 bool operator>=  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
 {
-    return lhs.pos >= rhs.pos;
+    return lhs.pos <= rhs.pos;
 }
 
 /* http://www.cplusplus.com/reference/iterator/reverse_iterator/ */

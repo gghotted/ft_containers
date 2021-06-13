@@ -511,6 +511,79 @@ typename vector<Tp>::iterator operator+(typename vector<Tp>::iterator::differenc
     return (v + n);
 }
 
+template <class T, class Alloc>
+void swap(vector<T,Alloc>& x, vector<T,Alloc>& y)
+{
+    x.swap(y);
+}
+
+template <class T, class Alloc>
+bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    typename vector<T,Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end())
+    {
+        if (*lit != *rit)
+            return false;
+        ++lit;
+        ++rit;
+    }
+    return true;
+}
+
+template <class T, class Alloc>
+bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <class T, class Alloc>
+bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{
+    typename vector<T,Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end() && rit != rhs.end())
+    {
+        if (*lit > *rit)
+            return false;
+        if (*lit < *rit)
+            return true;
+        ++lit;
+        ++rit;
+    }
+    return (lit == lhs.end()) && (rit != rhs.end());
+}
+
+template <class T, class Alloc>
+bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{
+    return (lhs < rhs) || (lhs == rhs);
+}
+
+template <class T, class Alloc>
+bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{
+    typename vector<T,Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end() && rit != rhs.end())
+    {
+        if (*lit < *rit)
+            return false;
+        if (*lit > *rit)
+            return true;
+        ++lit;
+        ++rit;
+    }
+    return (lit != lhs.end()) && (rit == rhs.end());
+}
+
+template <class T, class Alloc>
+bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+{
+    return (lhs > rhs) || (lhs == rhs);
+}
+
 }
 
 #endif // VECTOR_HPP
