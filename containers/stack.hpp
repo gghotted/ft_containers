@@ -48,6 +48,24 @@ bool operator>= (const stack<T,Container>& lhs, const stack<T,Container>& rhs)
 template <class T, class Container>
 class stack
 {
+    template <class T_, class Container_>
+    friend bool operator== (const stack<T_,Container_>& lhs, const stack<T_,Container_>& rhs);
+
+    template <class T_, class Container_>
+    friend bool operator!= (const stack<T_,Container_>& lhs, const stack<T_,Container_>& rhs);
+
+    template <class T_, class Container_>
+    friend bool operator<  (const stack<T_,Container_>& lhs, const stack<T_,Container_>& rhs);
+
+    template <class T_, class Container_>
+    friend bool operator<= (const stack<T_,Container_>& lhs, const stack<T_,Container_>& rhs);
+
+    template <class T_, class Container_>
+    friend bool operator>  (const stack<T_,Container_>& lhs, const stack<T_,Container_>& rhs);
+
+    template <class T_, class Container_>
+    friend bool operator>= (const stack<T_,Container_>& lhs, const stack<T_,Container_>& rhs);
+
     public:
         typedef T         value_type;
         typedef Container container_type;
