@@ -152,6 +152,16 @@ struct pair
 
     first_type  first;
     second_type second;
+
+    pair(const first& f, const second& s)
+        : first(f),
+          second(s)
+    {
+    }
+    pair operator()(const first& f, const second& s)
+    {
+        return pair(f, s);
+    }
 };
 
 }

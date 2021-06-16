@@ -17,6 +17,9 @@ template <
     class Alloc = std::allocator<pair<const Key,T> > >
 class map
 {
+    private:
+        typedef TreeNode<pair<const Key,T> > node;
+
     public:
         template <class Tp>
         class MapIterator : public iterator<bidirectional_iterator_tag, Tp>
@@ -35,7 +38,7 @@ class map
                 typedef typename remove_const<Tp>::type non_const_Tp;
                 typedef MapIterator<non_const_Tp>       non_const_iterator;
 
-                TreeNode* node_;
+                node* node_;
 
             public:
                 MapIterator()
@@ -43,7 +46,7 @@ class map
                 {
                 }
 
-                MapIterator(TreeNode* node_)
+                MapIterator(node* node_)
                     : node_(node_)
                 {
                 }
@@ -68,12 +71,12 @@ class map
                     if (node_->getRight())
                         node_ = node_->getRight()->getMinNode();
 
-                    else if (node_->getParentRelation() == TreeNode::ParentRelation::LEFT_CHILD)
+                    else if (node_->getParentRelation() == node::ParentRelation::LEFT_CHILD)
                         node_ = node_->getParent();
 
-                    else if (node_->getParentRelation() == TreeNode::ParentRelation::RIGHT_CHILD)
+                    else if (node_->getParentRelation() == node::ParentRelation::RIGHT_CHILD)
                     {
-                        node_ = node_->getParent_if(TreeNode::hasRightParent);
+                        node_ = node_->getParent_if(node::hasRightParent);
                         node_ = node_ ? node_->getParent() : NULL;
                     }
                     return *this;
@@ -84,12 +87,12 @@ class map
                     if (node_->getLeft())
                         node_ = node_->getLeft()->getMaxNode();
 
-                    else if (node_->getParentRelation() == TreeNode::ParentRelation::RIGHT_CHILD)
+                    else if (node_->getParentRelation() == node::ParentRelation::RIGHT_CHILD)
                         node_ = node_->getParent();
 
-                    else if (node_->getParentRelation() == TreeNode::ParentRelation::LEFT_CHILD)
+                    else if (node_->getParentRelation() == node::ParentRelation::LEFT_CHILD)
                     {
-                        node_ = node_->getParent_if(TreeNode::hasLeftParent);
+                        node_ = node_->getParent_if(node::hasLeftParent);
                         node_ = node_ ? node_->getParent() : NULL;
                     }
                     return *this;
@@ -149,7 +152,7 @@ class map
         /* constructor */
         explicit map(const key_compare &comp = key_compare(),
                      const allocator_type &alloc = allocator_type())
-            : root(NULL), minNode(NULL), maxNode(NULL), size_(0), comp_(comp), alloc_(alloc)
+            : root_(NULL), minNode_(NULL), maxNode_(NULL), size_(0), comp_(comp), alloc_(alloc)
         {
         }
 
@@ -157,7 +160,7 @@ class map
         map(InputIterator first, InputIterator last,
             const key_compare &comp = key_compare(),
             const allocator_type &alloc = allocator_type())
-            : root(NULL), minNode(NULL), maxNode(NULL), size_(0), comp_(comp), alloc_(alloc)
+            : root_(NULL), minNode_(NULL), maxNode_(NULL), size_(0), comp_(comp), alloc_(alloc)
         {
             for (; first != last; ++first)
                 insert(*first);
@@ -203,19 +206,19 @@ class map
         {
             if (root_ == NULL)
             {
-                root_ = new TreeNode(val);
+                root_ = new node(val);
                 size_++;
                 return pair<iterator, bool>(iterator(root_), true);
             }
 
-            TreeNode* cur = root_;
+            node* cur = root_;
             while (1)
             {
                 if (cur->getContent().first < val.first)
                 {
                     if (cur->getRight() == NULL)
                     {
-                        cur->LinkRight(new TreeNode(val));
+                        cur->LinkRight(new node(val));
                         size_++;
                         return iterator(cur->getRight());
                     }
@@ -226,7 +229,7 @@ class map
                 {
                     if (cur->getLeft() == NULL)
                     {
-                        cur->LinkLeft(new TreeNode(val));
+                        cur->LinkLeft(new node(val));
                         size_++;
                         return iterator(cur->getLeft());
                     }
@@ -282,9 +285,9 @@ class map
         // allocator_type get_allocator() const;
 
     private:
-        TreeNode*       root_;
-        TreeNode*       minNode_;
-        TreeNode*       maxNode_;
+        node*           root_;
+        node*           minNode_;
+        node*           maxNode_;
         size_type       size_;
         key_compare     comp_;
         allocator_type  alloc_;

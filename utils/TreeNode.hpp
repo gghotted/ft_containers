@@ -116,12 +116,12 @@ class TreeNode
         {
             if (!parent_)                    return NULL_PARENT;
             if (parent_->getleft() == this)  return LEFT_CHILD;
-            if (parent_->getRight() == this) return LEFT_CHILD;
+            if (parent_->getRight() == this) return RIGHT_CHILD;
         }
 
         TreeNode* getMinNode() const
         {
-            minNode_ = this;
+            TreeNode* minNode_ = this;
             while (minNode_->getLeft())
                 minNode_ = minNode_->getLeft();
             return minNode_;
@@ -129,7 +129,7 @@ class TreeNode
 
         TreeNode* getMaxNode() const
         {
-            maxNode_ = this;
+            TreeNode* maxNode_ = this;
             while (maxNode_->getRight())
                 maxNode_ = maxNode_->getRight();
             return maxNode_;
