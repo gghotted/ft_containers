@@ -7,6 +7,14 @@ namespace ft
 template <class Tp>
 class TreeNode
 {
+    public:
+        enum ParentRelation
+        {
+            LEFT_CHILD,
+            RIGHT_CHILD,
+            NULL_PARENT
+        };
+
     private:
         TreeNode* parent_;
         TreeNode* left_;
@@ -70,9 +78,61 @@ class TreeNode
             return left_;
         }
 
+        TreeNode* getParent() const
+        {
+            return parent_;
+        }
+
+        template<class Predicate>
+        TreeNode* getParent_if(Predicate pred) const
+        {
+            parent_ = this->parent_;
+            while (parent_ && pred(parent_) == false)
+                parent_ = parent_->getParent();
+            return parent_;
+        }
+
         Tp& getContent() // Tp& vs Tp ??
         {
             return content_;
+        }
+
+        bool hasChild() const
+        {
+            return (left_ || right_);
+        }
+
+        static bool hasRightParent(const TreeNode* tn_)
+        {
+            return tn_->getParentRelation() == LEFT_CHILD;
+        }
+
+        static bool hasLeftParent(const TreeNode* tn_)
+        {
+            return tn_->getParentRelation() == RIGHT_CHILD;
+        }
+
+        ParentRelation getParentRelation() const
+        {
+            if (!parent_)                    return NULL_PARENT;
+            if (parent_->getleft() == this)  return LEFT_CHILD;
+            if (parent_->getRight() == this) return LEFT_CHILD;
+        }
+
+        TreeNode* getMinNode() const
+        {
+            minNode_ = this;
+            while (minNode_->getLeft())
+                minNode_ = minNode_->getLeft();
+            return minNode_;
+        }
+
+        TreeNode* getMaxNode() const
+        {
+            maxNode_ = this;
+            while (maxNode_->getRight())
+                maxNode_ = maxNode_->getRight();
+            return maxNode_;
         }
 };
 

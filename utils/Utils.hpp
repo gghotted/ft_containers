@@ -144,6 +144,16 @@ template <class T> struct less : binary_function <T,T,bool> {
     bool operator() (const T& x, const T& y) const {return x<y;}
 };
 
+template <class T1, class T2>
+struct pair
+{
+    typedef T1 first_type;
+    typedef T2 second_type;
+
+    first_type  first;
+    second_type second;
+};
+
 }
 
 #endif // UTILS_HPP
