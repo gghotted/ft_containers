@@ -70,15 +70,10 @@ class map
                 {
                     if (node_->getRight())
                         node_ = node_->getRight()->getMinNode();
-
-                    else if (node_->getParentRelation() == node::ParentRelation::LEFT_CHILD)
+                    else if (node_->getParentRelation() == node::LEFT_CHILD)
                         node_ = node_->getParent();
-
-                    else if (node_->getParentRelation() == node::ParentRelation::RIGHT_CHILD)
-                    {
-                        node_ = node_->getParent_if(node::hasRightParent);
-                        node_ = node_ ? node_->getParent() : NULL;
-                    }
+                    else if (node_->getParentRelation() == node::RIGHT_CHILD)
+                        node_ = node_->getParent_if(node::hasRightParent)->getParent();
                     return *this;
                 }
 
@@ -86,15 +81,10 @@ class map
                 {
                     if (node_->getLeft())
                         node_ = node_->getLeft()->getMaxNode();
-
-                    else if (node_->getParentRelation() == node::ParentRelation::RIGHT_CHILD)
+                    else if (node_->getParentRelation() == node::RIGHT_CHILD)
                         node_ = node_->getParent();
-
-                    else if (node_->getParentRelation() == node::ParentRelation::LEFT_CHILD)
-                    {
-                        node_ = node_->getParent_if(node::hasLeftParent);
-                        node_ = node_ ? node_->getParent() : NULL;
-                    }
+                    else if (node_->getParentRelation() == node::LEFT_CHILD)
+                        node_ = node_->getParent_if(node::hasLeftParent)->getParent();
                     return *this;
                 }
 
@@ -152,110 +142,206 @@ class map
         /* constructor */
         explicit map(const key_compare &comp = key_compare(),
                      const allocator_type &alloc = allocator_type())
-            : root_(NULL), minNode_(NULL), maxNode_(NULL), size_(0), comp_(comp), alloc_(alloc)
+            : minNode_(NULL), maxNode_(NULL), size_(0), comp_(comp), alloc_(alloc)
         {
+            initDefaultNode();
         }
 
         template <class InputIterator>
         map(InputIterator first, InputIterator last,
             const key_compare &comp = key_compare(),
             const allocator_type &alloc = allocator_type())
-            : root_(NULL), minNode_(NULL), maxNode_(NULL), size_(0), comp_(comp), alloc_(alloc)
+            : minNode_(NULL), maxNode_(NULL), size_(0), comp_(comp), alloc_(alloc)
         {
+            initDefaultNode();
             for (; first != last; ++first)
                 insert(*first);
         }
 
-        // map(const map &x);
+        map(const map &x)
+            : minNode_(NULL), maxNode_(NULL), size_(0), alloc_(x.alloc_)
+        {
+            initDefaultNode();
+            *this = x;
+        }
 
         // /* destructor */
-        // ~map();
+        ~map()
+        {
+            clear();
+            delete maxNode_;
+            delete minNode_;
+        }
 
         // /* assignation */
-        // map &operator=(const map &x);
+        map &operator=(const map &x)
+        {
+            clear();
+            insert(x.begin(), x.end());
+            return *this;
+        }
 
         // /* iterator */
-        // iterator begin();
+        iterator begin()
+        {
+            return empty() ? end()
+                           : iterator(root()->getMinNode());
+        }
 
-        // const_iterator begin() const;
+        const_iterator begin() const
+        {
+            return empty() ? end()
+                           : const_iterator(root()->getMinNode());
+        }
 
-        // iterator end();
+        iterator end()
+        {
+            return iterator(maxNode_);
+        }
 
-        // const_iterator end() const;
+        const_iterator end() const
+        {
+            return const_iterator(maxNode_);
+        }
 
-        // reverse_iterator rbegin();
+        reverse_iterator rbegin()
+        {
+            return empty() ? rend()
+                           : reverse_iterator(maxNode_);
+        }
 
-        // const_reverse_iterator rbegin() const;
+        const_reverse_iterator rbegin() const
+        {
+            return empty() ? rend()
+                           : const_reverse_iterator(maxNode_);
+        }
 
-        // reverse_iterator rend();
+        reverse_iterator rend()
+        {
+            return reverse_iterator(root()->getMinNode());
+        }
 
-        // const_reverse_iterator rend() const;
+        const_reverse_iterator rend() const
+        {
+            return const_reverse_iterator(root()->getMinNode());
+        }
 
         // /* capacity */
-        // bool empty() const;
+        bool empty() const
+        {
+            return (size_ == 0);
+        }
 
-        // size_type size() const;
+        size_type size() const
+        {
+            return size_;
+        }
 
-        // size_type max_size() const;
+        size_type max_size () const
+        {
+            return std::numeric_limits<difference_type>::max(); // ??
+        }
 
         // /* element access */
-        // mapped_type &operator[](const key_type &k);
+        mapped_type &operator[](const key_type &k)
+        {
+            iterator it = find(k);
+            return it == end() ? insert(value_type(k, mapped_type())).first->second
+                               : it->second;
+        }
 
         /* modifier */
         pair<iterator, bool> insert(const value_type &val)
         {
-            if (root_ == NULL)
+            if (root() == NULL)
             {
-                root_ = new node(val);
+                maxNode_->linkLeft(new node(val));
                 size_++;
-                return pair<iterator, bool>(iterator(root_), true);
+                return pair<iterator, bool>(iterator(root()), true);
             }
 
-            node* cur = root_;
+            node* cur = root();
             while (1)
             {
-                if (cur->getContent().first < val.first)
-                {
-                    if (cur->getRight() == NULL)
-                    {
-                        cur->LinkRight(new node(val));
-                        size_++;
-                        return iterator(cur->getRight());
-                    }
-                    else
-                        cur = cur->getRight();
-                }
-                else if (cur->getContent().first > val.first)
+                if (cur->getContent().first == val.first)
+                    return pair<iterator, bool>(iterator(cur), false);
+                else if (comp_(val.first, cur->getContent().first))
                 {
                     if (cur->getLeft() == NULL)
                     {
-                        cur->LinkLeft(new node(val));
+                        cur->linkLeft(new node(val));
                         size_++;
-                        return iterator(cur->getLeft());
+                        return pair<iterator, bool>(iterator(cur->getLeft()), true);
                     }
                     else
                         cur = cur->getLeft();
                 }
                 else
-                    return pair<iterator, bool>(iterator(cur), false);
+                {
+                    if (cur->getRight() == NULL)
+                    {
+                        cur->linkRight(new node(val));
+                        size_++;
+                        return pair<iterator, bool>(iterator(cur->getRight()), true);
+                    }
+                    else
+                        cur = cur->getRight();
+                }
             }
             return pair<iterator, bool>(iterator(NULL), false);
         }
 
         // iterator insert(iterator position, const value_type &val);
 
-        // template <class InputIterator>
-        // void insert(InputIterator first, InputIterator last);
+        template <class InputIterator>
+        void insert(InputIterator first, InputIterator last)
+        {
+            for (; first != last; ++first)
+                insert(*first);
+        }
 
-        // void erase(iterator position);
+        void erase(iterator position)
+        {
+            --size_;
+            if (!position.node_->hasChild())
+            {
+                position.node_->unLinkParent();
+                delete position.node_;
+                return ;
+            }
+
+            node* newParent = position.node_->getNewParent();
+            node* left      = position.node_->getLeft();
+            node* right     = position.node_->getRight();
+
+            if (left  == newParent) left  = left->getLeft();
+            if (right == newParent) right = right->getRight();
+
+            newParent->linkParent(position.node_->getParent(), position.node_->getParentRelation());
+            newParent->linkLeft(left);
+            newParent->linkRight(right);
+        }
 
         // size_type erase(const key_type &k);
 
-        // void erase(iterator first, iterator last);
+        void erase(iterator first, iterator last)
+        {
+            if (first == last)
+                return ;
+            while (first != last)
+            {
+                iterator next = ft::next(first);
+                erase(first);
+                first = next;
+            }
+        }
 
         // void swap(map &x);
 
-        // void clear();
+        void clear()
+        {
+            erase(begin(), end());
+        }
 
         // /* observers */
         // key_compare key_comp() const;
@@ -263,9 +349,33 @@ class map
         // value_compare value_comp() const;
 
         // /* operations */
-        // iterator find(const key_type &k);
+        iterator find(const key_type &k)
+        {
+            node* node_ = root();
+            while (node_ && node_->getContent().first != k)
+            {
+                if (comp_(k, node_->getContent().first))
+                    node_ = node_->getLeft();
+                else
+                    node_ = node_->getRight();
+            }
+            return node_ ? iterator(node_)
+                         : end();
+        }
 
-        // const_iterator find(const key_type &k) const;
+        const_iterator find(const key_type &k) const
+        {
+            node* node_ = root();
+            while (node_ && node_->getContent().first != k)
+            {
+                if (comp(k, node_->getContent().first))
+                    node_ = node_->getLeft();
+                else
+                    node_ = node_->getRight();
+            }
+            return node_ ? iterator(node_)
+                         : end();
+        }
 
         // size_type count(const key_type &k) const;
 
@@ -285,12 +395,28 @@ class map
         // allocator_type get_allocator() const;
 
     private:
-        node*           root_;
         node*           minNode_;
         node*           maxNode_;
         size_type       size_;
         key_compare     comp_;
         allocator_type  alloc_;
+
+        node*& root()
+        {
+            return maxNode_->getLeft();
+        }
+
+        node* root() const
+        {
+            return maxNode_->getLeft();
+        }
+
+        void initDefaultNode()
+        {
+            minNode_ = new node(value_type(key_type(), mapped_type()));
+            maxNode_ = new node(value_type(key_type(), mapped_type()));
+            minNode_->linkRight(maxNode_);
+        }
 };
 
 }

@@ -4,6 +4,7 @@
 #include <memory>
 #include <stdexcept>
 #include "Iterator.hpp"
+#include "Utils.hpp"
 
 namespace ft
 {

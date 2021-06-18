@@ -3,7 +3,6 @@
 
 #include <iterator>
 #include <cstddef>
-#include "list.hpp"
 
 namespace ft
 {

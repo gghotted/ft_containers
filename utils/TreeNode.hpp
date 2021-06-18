@@ -38,47 +38,64 @@ class TreeNode
         {
         }
 
-        TreeNode(const TreeNode& tn)
+        TreeNode(const TreeNode& tn_)
         {
-            *this = tn;
+            *this = tn_;
         }
 
         ~TreeNode()
         {
+            unLinkParent();
+
         }
 
-        TreeNode& operator=(const TreeNode& tn)
+        TreeNode& operator=(const TreeNode& tn_)
         {
-            parent_ = tn.parent_;
-            left_ = tn.left_;
-            right_ = tn.right_;
-            content_ = tn.content_;
+            parent_ = tn_.parent_;
+            left_ = tn_.left_;
+            right_ = tn_.right_;
+            content_ = tn_.content_;
             return *this;
         }
 
-        void linkRight(TreeNode* tn)
+        void linkRight(TreeNode* tn_)
         {
-            right_ = tn;
-            tn->parent_ = this;
+            right_ = tn_;
+            if (tn_)
+                tn_->parent_ = this;
         }
 
-        void linkLeft(TreeNode* tn)
+        void linkLeft(TreeNode* tn_)
         {
-            left_ = tn;
-            tn->parent_ = this;
+            left_ = tn_;
+            if (tn_)
+                tn_->parent_ = this;
         }
 
-        TreeNode* getRight() const
+        void linkParent(TreeNode* tn_, ParentRelation relation)
+        {
+            if (relation == LEFT_CHILD)  tn_->linkLeft(this);
+            if (relation == RIGHT_CHILD) tn_->linkRight(this);
+        }
+
+        void unLinkParent()
+        {
+            ParentRelation relation = getParentRelation();
+            if (relation == LEFT_CHILD)  getParent()->linkLeft(NULL);
+            if (relation == RIGHT_CHILD) getParent()->linkRight(NULL);
+        }
+
+        TreeNode*& getRight()
         {
             return right_;
         }
 
-        TreeNode* getleft() const
+        TreeNode*& getLeft()
         {
             return left_;
         }
 
-        TreeNode* getParent() const
+        TreeNode*& getParent()
         {
             return parent_;
         }
@@ -86,7 +103,7 @@ class TreeNode
         template<class Predicate>
         TreeNode* getParent_if(Predicate pred) const
         {
-            parent_ = this->parent_;
+            TreeNode* parent_ = this->parent_;
             while (parent_ && pred(parent_) == false)
                 parent_ = parent_->getParent();
             return parent_;
@@ -115,11 +132,12 @@ class TreeNode
         ParentRelation getParentRelation() const
         {
             if (!parent_)                    return NULL_PARENT;
-            if (parent_->getleft() == this)  return LEFT_CHILD;
+            if (parent_->getLeft() == this)  return LEFT_CHILD;
             if (parent_->getRight() == this) return RIGHT_CHILD;
+            return NULL_PARENT;
         }
 
-        TreeNode* getMinNode() const
+        TreeNode* getMinNode()
         {
             TreeNode* minNode_ = this;
             while (minNode_->getLeft())
@@ -127,12 +145,25 @@ class TreeNode
             return minNode_;
         }
 
-        TreeNode* getMaxNode() const
+        TreeNode* getMaxNode()
         {
             TreeNode* maxNode_ = this;
             while (maxNode_->getRight())
                 maxNode_ = maxNode_->getRight();
             return maxNode_;
+        }
+
+        TreeNode* getNewParent()
+        {
+            return left_ ? left_->getMaxNode()
+                         : right_->getMinNode();
+        }
+
+        void linkCopy(TreeNode* tn_) const
+        {
+            linkLeft(tn_->getLeft());
+            linkRight(tn_->getRight());
+            linkParent(tn_->getParent(), tn_->getParentRelation());
         }
 };
 
