@@ -291,7 +291,11 @@ class map
             return pair<iterator, bool>(iterator(NULL), false);
         }
 
-        // iterator insert(iterator position, const value_type &val);
+        iterator insert(iterator position, const value_type &val)
+        {
+            (void)position;
+            insert(val);
+        }
 
         template <class InputIterator>
         void insert(InputIterator first, InputIterator last)
@@ -317,7 +321,12 @@ class map
             if (left  == newParent) left  = left->getLeft();
             if (right == newParent) right = right->getRight();
 
+            if (comp_(position.node_->getContent().first, newParent->getContent().first))
+                newParent->getParent()->linkLeft(newParent->getRight());
+            else
+                newParent->getParent()->linkRight(newParent->getLeft());
             newParent->linkParent(position.node_->getParent(), position.node_->getParentRelation());
+
             newParent->linkLeft(left);
             newParent->linkRight(right);
         }
@@ -377,19 +386,88 @@ class map
                          : end();
         }
 
-        // size_type count(const key_type &k) const;
+        size_type count(const key_type &k) const
+        {
+            const_iterator it = find(k);
+            return it != end();
+        }
 
-        // iterator lower_bound(const key_type &k);
+        iterator lower_bound(const key_type &k)
+        {
+            node* node_ = root();
+            while (node_)
+            {
+                if (k == node_->getContent().first)
+                    return iterator(node_);
+                else if (comp_(k, node_->getContent().first)) // k가 작음
+                {
+                    if (!node_->getLeft())
+                        return iterator(node_);
+                    node_ = node_->getLeft();
+                }
+                else // k가 큼
+                {
+                    if (!node_->getRight())
+                        return ++iterator(node_);
+                    node_ = node_->getRight();
+                }
+            }
+            return end();
+        }
 
-        // const_iterator lower_bound(const key_type &k) const;
+        const_iterator lower_bound(const key_type &k) const
+        {
+            node* node_ = root();
+            while (node_)
+            {
+                if (k == node_->getContent().first)
+                    return const_iterator(node_);
+                else if (comp_(k, node_->getContent().first)) // k가 작음
+                {
+                    if (!node_->getLeft())
+                        return const_iterator(node_);
+                    node_ = node_->getLeft();
+                }
+                else // k가 큼
+                {
+                    if (!node_->getRight())
+                        return ++const_iterator(node_);
+                    node_ = node_->getRight();
+                }
+            }
+            return end();
+        }
 
-        // iterator upper_bound(const key_type &k);
+        iterator upper_bound(const key_type &k)
+        {
+            iterator it = lower_bound(k);
+            if (it == end())
+                return end();
+            if (it->first == k)
+                ++it;
+            return it;
+        }
 
-        // const_iterator upper_bound(const key_type &k) const;
+        const_iterator upper_bound(const key_type &k) const
+        {
+            const_iterator it = lower_bound(k);
+            if (it == end())
+                return end();
+            if (it->first == k)
+                ++it;
+            return it;
+        }
 
-        // pair<const_iterator, const_iterator> equal_range(const key_type &k) const;
+        pair<iterator, iterator> equal_range(const key_type &k)
+        {
+            return pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+        }
 
-        // pair<iterator, iterator> equal_range(const key_type &k);
+        pair<const_iterator, const_iterator> equal_range(const key_type &k) const
+        {
+            return pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k));
+        }
+
 
         // /* allocator */
         // allocator_type get_allocator() const;

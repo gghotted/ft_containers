@@ -45,7 +45,7 @@ class TreeNode
 
         ~TreeNode()
         {
-            unLinkParent();
+            // unLinkParent();
 
         }
 
