@@ -76,6 +76,7 @@ class TreeNode
         {
             if (relation == LEFT_CHILD)  tn_->linkLeft(this);
             if (relation == RIGHT_CHILD) tn_->linkRight(this);
+            if (relation == NULL_PARENT) parent_ = NULL;
         }
 
         void unLinkParent()

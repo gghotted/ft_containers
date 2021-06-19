@@ -52,8 +52,8 @@ class map
                 }
 
                 MapIterator(const non_const_iterator& mi)
+                    : node_(mi.node_)
                 {
-                    *this = mi;
                 }
 
                 virtual ~MapIterator()
@@ -138,6 +138,22 @@ class map
         typedef ft::reverse_iterator<const_iterator>     const_reverse_iterator;
         typedef ptrdiff_t                                difference_type;
         typedef size_t                                   size_type;
+        template <class Key, class T, class Compare, class Alloc>
+        class value_compare : public binary_function<value_type, value_type, bool>
+        {
+            friend class map;
+        protected:
+            Compare comp;
+            value_compare(Compare c) : comp(c) {}
+        public:
+            typedef bool result_type;
+            typedef value_type first_argument_type;
+            typedef value_type second_argument_type;
+            bool operator()(const value_type &x, const value_type &y) const
+            {
+                return comp(x.first, y.first);
+            }
+        }
 
         /* constructor */
         explicit map(const key_compare &comp = key_compare(),
@@ -295,6 +311,7 @@ class map
         {
             (void)position;
             insert(val);
+            return find(val.first);
         }
 
         template <class InputIterator>
@@ -325,13 +342,21 @@ class map
                 newParent->getParent()->linkLeft(newParent->getRight());
             else
                 newParent->getParent()->linkRight(newParent->getLeft());
-            newParent->linkParent(position.node_->getParent(), position.node_->getParentRelation());
 
+            newParent->linkParent(position.node_->getParent(), position.node_->getParentRelation());
             newParent->linkLeft(left);
             newParent->linkRight(right);
+            delete position.node_;
         }
 
-        // size_type erase(const key_type &k);
+        size_type erase(const key_type &k)
+        {
+            iterator it = find(k);
+            if (it == end())
+                return 0;
+            erase(it);
+            return 1;
+        }
 
         void erase(iterator first, iterator last)
         {
@@ -345,19 +370,30 @@ class map
             }
         }
 
-        // void swap(map &x);
+        void swap(map &x)
+        {
+            ft::swap(minNode_, x.minNode_);
+            ft::swap(maxNode_, x.maxNode_);
+            ft::swap(size_, x.size_);
+        }
 
         void clear()
         {
             erase(begin(), end());
         }
 
-        // /* observers */
-        // key_compare key_comp() const;
+        /* observers */
+        key_compare key_comp() const
+        {
+            return comp_;
+        }
 
-        // value_compare value_comp() const;
+        value_compare value_comp() const
+        {
+            return value_compare(comp_);
+        }
 
-        // /* operations */
+        /* operations */
         iterator find(const key_type &k)
         {
             node* node_ = root();
@@ -377,12 +413,12 @@ class map
             node* node_ = root();
             while (node_ && node_->getContent().first != k)
             {
-                if (comp(k, node_->getContent().first))
+                if (comp_(k, node_->getContent().first))
                     node_ = node_->getLeft();
                 else
                     node_ = node_->getRight();
             }
-            return node_ ? iterator(node_)
+            return node_ ? const_iterator(node_)
                          : end();
         }
 
