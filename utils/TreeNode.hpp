@@ -159,13 +159,6 @@ class TreeNode
             return left_ ? left_->getMaxNode()
                          : right_->getMinNode();
         }
-
-        void linkCopy(TreeNode* tn_) const
-        {
-            linkLeft(tn_->getLeft());
-            linkRight(tn_->getRight());
-            linkParent(tn_->getParent(), tn_->getParentRelation());
-        }
 };
 
 }

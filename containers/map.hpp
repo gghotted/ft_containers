@@ -40,6 +40,11 @@ class map
 
                 node* node_;
 
+                non_const_iterator asNonConst()
+                {
+                    return non_const_iterator(node_);
+                }
+
             public:
                 MapIterator()
                     : node_(NULL)
@@ -138,7 +143,7 @@ class map
         typedef ft::reverse_iterator<const_iterator>     const_reverse_iterator;
         typedef ptrdiff_t                                difference_type;
         typedef size_t                                   size_type;
-        template <class Key, class T, class Compare, class Alloc>
+
         class value_compare : public binary_function<value_type, value_type, bool>
         {
             friend class map;
@@ -153,7 +158,7 @@ class map
             {
                 return comp(x.first, y.first);
             }
-        }
+        };
 
         /* constructor */
         explicit map(const key_compare &comp = key_compare(),
@@ -222,24 +227,22 @@ class map
 
         reverse_iterator rbegin()
         {
-            return empty() ? rend()
-                           : reverse_iterator(maxNode_);
+            return reverse_iterator(end());
         }
 
         const_reverse_iterator rbegin() const
         {
-            return empty() ? rend()
-                           : const_reverse_iterator(maxNode_);
+            return const_reverse_iterator(end());
         }
 
         reverse_iterator rend()
         {
-            return reverse_iterator(root()->getMinNode());
+            return reverse_iterator(begin());
         }
 
         const_reverse_iterator rend() const
         {
-            return const_reverse_iterator(root()->getMinNode());
+            return const_reverse_iterator(begin());
         }
 
         // /* capacity */
@@ -269,49 +272,24 @@ class map
         /* modifier */
         pair<iterator, bool> insert(const value_type &val)
         {
-            if (root() == NULL)
-            {
-                maxNode_->linkLeft(new node(val));
-                size_++;
-                return pair<iterator, bool>(iterator(root()), true);
-            }
-
-            node* cur = root();
-            while (1)
-            {
-                if (cur->getContent().first == val.first)
-                    return pair<iterator, bool>(iterator(cur), false);
-                else if (comp_(val.first, cur->getContent().first))
-                {
-                    if (cur->getLeft() == NULL)
-                    {
-                        cur->linkLeft(new node(val));
-                        size_++;
-                        return pair<iterator, bool>(iterator(cur->getLeft()), true);
-                    }
-                    else
-                        cur = cur->getLeft();
-                }
-                else
-                {
-                    if (cur->getRight() == NULL)
-                    {
-                        cur->linkRight(new node(val));
-                        size_++;
-                        return pair<iterator, bool>(iterator(cur->getRight()), true);
-                    }
-                    else
-                        cur = cur->getRight();
-                }
-            }
-            return pair<iterator, bool>(iterator(NULL), false);
+            iterator it = upper_bound(val.first);
+            size_type beforeSize = size_;
+            insert(it, val);
+            return (pair<iterator, bool>(--it, beforeSize < size_));
         }
 
         iterator insert(iterator position, const value_type &val)
         {
-            (void)position;
-            insert(val);
-            return find(val.first);
+            if (!isUpperBound(position, val.first))
+                position = lower_bound(val.first);
+            if (position != end() && position->first == val.first)
+                return position;
+
+            node* newNode = new node(val);
+            newNode->linkLeft(position.node_->getLeft());
+            position.node_->linkLeft(newNode);
+            ++size_;
+            return iterator(newNode);
         }
 
         template <class InputIterator>
@@ -396,59 +374,24 @@ class map
         /* operations */
         iterator find(const key_type &k)
         {
-            node* node_ = root();
-            while (node_ && node_->getContent().first != k)
-            {
-                if (comp_(k, node_->getContent().first))
-                    node_ = node_->getLeft();
-                else
-                    node_ = node_->getRight();
-            }
-            return node_ ? iterator(node_)
-                         : end();
+            return static_cast<const map&>(*this).find(k).asNonConst();
         }
 
         const_iterator find(const key_type &k) const
         {
-            node* node_ = root();
-            while (node_ && node_->getContent().first != k)
-            {
-                if (comp_(k, node_->getContent().first))
-                    node_ = node_->getLeft();
-                else
-                    node_ = node_->getRight();
-            }
-            return node_ ? const_iterator(node_)
-                         : end();
+            const_iterator it = lower_bound(k);
+            if (it == end() || it->first != k) return end();
+            return it;
         }
 
         size_type count(const key_type &k) const
         {
-            const_iterator it = find(k);
-            return it != end();
+            return find(k) != end();
         }
 
         iterator lower_bound(const key_type &k)
         {
-            node* node_ = root();
-            while (node_)
-            {
-                if (k == node_->getContent().first)
-                    return iterator(node_);
-                else if (comp_(k, node_->getContent().first)) // k가 작음
-                {
-                    if (!node_->getLeft())
-                        return iterator(node_);
-                    node_ = node_->getLeft();
-                }
-                else // k가 큼
-                {
-                    if (!node_->getRight())
-                        return ++iterator(node_);
-                    node_ = node_->getRight();
-                }
-            }
-            return end();
+            return static_cast<const map&>(*this).lower_bound(k).asNonConst();
         }
 
         const_iterator lower_bound(const key_type &k) const
@@ -476,12 +419,7 @@ class map
 
         iterator upper_bound(const key_type &k)
         {
-            iterator it = lower_bound(k);
-            if (it == end())
-                return end();
-            if (it->first == k)
-                ++it;
-            return it;
+            return static_cast<const map&>(*this).upper_bound(k).asNonConst();
         }
 
         const_iterator upper_bound(const key_type &k) const
@@ -504,9 +442,11 @@ class map
             return pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k));
         }
 
-
-        // /* allocator */
-        // allocator_type get_allocator() const;
+        /* allocator */
+        allocator_type get_allocator() const
+        {
+            return alloc_;
+        }
 
     private:
         node*           minNode_;
@@ -515,12 +455,7 @@ class map
         key_compare     comp_;
         allocator_type  alloc_;
 
-        node*& root()
-        {
-            return maxNode_->getLeft();
-        }
-
-        node* root() const
+        node*& root() const
         {
             return maxNode_->getLeft();
         }
@@ -531,7 +466,92 @@ class map
             maxNode_ = new node(value_type(key_type(), mapped_type()));
             minNode_->linkRight(maxNode_);
         }
+
+        bool isUpperBound(iterator upperBound, const key_type& k)
+        {
+            if (upperBound == end() && size_ == 0)
+                return true;
+            iterator before = prev(upperBound);
+            return (before->first < k && k < upperBound->first);
+        }
 };
+
+template <class Key, class T, class Compare, class Alloc>
+void swap(map<Key, T, Compare, Alloc>& x, map<Key, T, Compare, Alloc>& y)
+{
+    x.swap(y);
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator==(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    typename map<Key, T, Compare, Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end())
+    {
+        if (lit->first != rit->first || lit->second != rit->second)
+            return false;
+        ++lit;
+        ++rit;
+    }
+    return true;
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator!=(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator<(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+{
+    typename map<Key, T, Compare, Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end() && rit != rhs.end())
+    {
+        if (lit->first == rit->first && lit->second != rit->second)
+            return lit->second < rit->second;
+        if (lit->first > rit->first)
+            return false;
+        if (lit->first < rit->first)
+            return true;
+        ++lit;
+        ++rit;
+    }
+    return (lit == lhs.end()) && (rit != rhs.end());
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator<= (const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+{
+    return (lhs < rhs) || (lhs == rhs);
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator>(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+{
+    typename map<Key, T, Compare, Alloc>::const_iterator lit = lhs.begin(), rit = rhs.begin();
+    while (lit != lhs.end() && rit != rhs.end())
+    {
+        if (lit->first == rit->first && lit->second != rit->second)
+            return lit->second > rit->second;
+        if (lit->first < rit->first)
+            return false;
+        if (lit->first > rit->first)
+            return true;
+        ++lit;
+        ++rit;
+    }
+    return (lit != lhs.end()) && (rit == rhs.end());
+}
+
+template <class Key, class T, class Compare, class Alloc>
+bool operator>=(const map<Key, T, Compare, Alloc>& lhs, const map<Key, T, Compare, Alloc>& rhs)
+{
+    return (lhs > rhs) || (lhs == rhs);
+}
 
 }
 

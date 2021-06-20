@@ -111,6 +111,14 @@ Iter next(Iter it, typename Iter::difference_type n = 1)
     return it;
 }
 
+template <class Iter>
+Iter prev(Iter it, typename Iter::difference_type n = 1)
+{
+    for (typename Iter::difference_type i = 0; i < n; i++)
+        --it;
+    return it;
+}
+
 template <class InputIterator, class OutputIterator>
 OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result)
 {
@@ -157,10 +165,6 @@ struct pair
         : first(f),
           second(s)
     {
-    }
-    pair operator()(const first_type& f, const second_type& s)
-    {
-        return pair(f, s);
     }
 };
 
