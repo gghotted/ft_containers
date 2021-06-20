@@ -189,7 +189,7 @@ class vector
               capacity_(0),
               data_(NULL)
         {
-            reserve(last - first);
+            reserve(ft::distance(first, last));
             push_back(first, last);
         }
 
@@ -358,7 +358,7 @@ class vector
                     typename disable_if<is_integral<InputIterator>::value>::type* = 0)
         {
             clear();
-            reserve(last - first);
+            reserve(ft::distance(first, last));
             push_back(first, last);
         }
 
@@ -408,7 +408,7 @@ class vector
         void insert(iterator position, InputIterator first, InputIterator last,
                     typename disable_if<is_integral<InputIterator>::value>::type* = 0)
         {
-            difference_type n = last - first;
+            difference_type n = ft::distance(first, last);
             difference_type idx = position - begin();
             reserve(size_ + n);
             position = iterator(data_ + idx);

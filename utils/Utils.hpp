@@ -96,9 +96,9 @@ void swap(Tp& lhs, Tp& rhs)
 }
 
 template <class Iter>
-typename Iter::difference_type distance(Iter first, Iter last)
+ptrdiff_t distance(Iter first, Iter last)
 {
-    typename Iter::difference_type dist = 0;
+    ptrdiff_t dist = 0;
     for (; first != last; ++first, ++dist) ;
     return dist;
 }
