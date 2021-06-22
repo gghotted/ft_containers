@@ -33,6 +33,7 @@ class   list
 
                 typedef typename remove_const<Tp_>::type non_const_Tp;
                 typedef ListIterator<non_const_Tp>       non_const_iterator;
+                typedef ListIterator<const non_const_Tp> const_iterator;
 
                 node* node_;
 
@@ -84,13 +85,21 @@ class   list
                     return &(operator*());
                 }
 
-                bool operator==(const ListIterator& rhs) const // ?
+                template <class Iter>
+                bool operator==(const Iter& rhs) const // ?
                 {
+                    typename enable_if<is_same<Iter, non_const_iterator>::value ||
+                              is_same<Iter, const_iterator>::value
+                              >::type(); // void();
                     return (node_ == rhs.node_);
                 }
 
-                bool operator!=(const ListIterator& rhs) const // ?
+                template <class Iter>
+                bool operator!=(const Iter& rhs) const // ?
                 {
+                    typename enable_if<is_same<Iter, non_const_iterator>::value ||
+                              is_same<Iter, const_iterator>::value
+                              >::type(); // void();
                     return (node_ != rhs.node_);
                 }
         };
