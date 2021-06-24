@@ -8,6 +8,7 @@
 #include "DoublyLinkedNode.hpp"
 #include "Iterator.hpp"
 #include "Utils.hpp"
+// #include "RelationalOperator.hpp"
 
 namespace ft
 {
@@ -32,15 +33,15 @@ class   list
                 template<class, class> friend class list;
 
                 typedef typename remove_const<Tp_>::type non_const_Tp;
-                typedef ListIterator<non_const_Tp>       non_const_iterator;
-                typedef ListIterator<const non_const_Tp> const_iterator;
+                typedef ListIterator<non_const_Tp>       non_const_type;
+                typedef ListIterator<const non_const_Tp> const_type;
 
                 node* node_;
 
             public:
                 ListIterator()                              : node_(NULL)     {}
                 ListIterator(node* node_)                   : node_(node_)    {}
-                ListIterator(const non_const_iterator& li)  : node_(li.node_) {}
+                ListIterator(const non_const_type& li)      : node_(li.node_) {}
                 virtual ~ListIterator()                                       {}
 
                 ListIterator& operator=(const ListIterator& li)
@@ -86,21 +87,15 @@ class   list
                 }
 
                 template <class Iter>
-                bool operator==(const Iter& rhs) const // ?
+                bool operator==(const Iter& rhs) const
                 {
-                    typename enable_if<is_same<Iter, non_const_iterator>::value ||
-                              is_same<Iter, const_iterator>::value
-                              >::type(); // void();
-                    return (node_ == rhs.node_);
+                    return static_cast<const_type>(*this).node_ == static_cast<const_type>(rhs).node_;
                 }
 
                 template <class Iter>
-                bool operator!=(const Iter& rhs) const // ?
+                bool operator!=(const Iter& rhs) const
                 {
-                    typename enable_if<is_same<Iter, non_const_iterator>::value ||
-                              is_same<Iter, const_iterator>::value
-                              >::type(); // void();
-                    return (node_ != rhs.node_);
+                    return static_cast<const_type>(*this).node_ != static_cast<const_type>(rhs).node_;
                 }
         };
 

@@ -87,13 +87,13 @@ template <>
 struct is_integral<__uint128_t>
 { static const bool value = true; };
 
-template <class _Tp, class _Up>
-struct is_same
-{static const bool value = false; };
+// template <class _Tp, class _Up>
+// struct is_same
+// {static const bool value = false; };
 
-template <class _Tp>
-struct is_same<_Tp, _Tp>
-{static const bool value = true; };
+// template <class _Tp>
+// struct is_same<_Tp, _Tp>
+// {static const bool value = true; };
 
 template <class Tp>
 void swap(Tp& lhs, Tp& rhs)

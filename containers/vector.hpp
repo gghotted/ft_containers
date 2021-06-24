@@ -28,14 +28,15 @@ class vector
                 template<class, class> friend class vector;
 
                 typedef typename remove_const<Tp_>::type          non_const_Tp;
-                typedef VectorIterator<non_const_Tp>              non_const_iterator;
+                typedef VectorIterator<non_const_Tp>              non_const_type;
+                typedef VectorIterator<const non_const_Tp>        const_type;
 
                 pointer ptr_;
 
             public:
                 VectorIterator() : ptr_(NULL) {}
                 VectorIterator(pointer ptr_) : ptr_(ptr_) {}
-                VectorIterator(const non_const_iterator& vi) : ptr_(vi.ptr_) {}
+                VectorIterator(const non_const_type& vi) : ptr_(vi.ptr_) {}
                 virtual ~VectorIterator() {}
 
                 VectorIterator& operator=(const VectorIterator& vi)
@@ -80,34 +81,40 @@ class vector
                     return &(operator*());
                 }
 
-                bool operator==(const VectorIterator& v) const
+                template<class Iter>
+                bool operator==(const Iter& v) const
                 {
-                    return ptr_ == v.ptr_;
+                    return static_cast<const_type>(*this).ptr_ == static_cast<const_type>(v).ptr_;
                 }
 
-                bool operator!=(const VectorIterator& v) const
+                template<class Iter>
+                bool operator!=(const Iter& v) const
                 {
-                    return ptr_ != v.ptr_;
+                    return static_cast<const_type>(*this).ptr_ != static_cast<const_type>(v).ptr_;
                 }
 
-                bool operator<(const VectorIterator& v) const
+                template<class Iter>
+                bool operator<(const Iter& v) const
                 {
-                    return ptr_ < v.ptr_;
+                    return static_cast<const_type>(*this).ptr_ < static_cast<const_type>(v).ptr_;
                 }
 
-                bool operator>(const VectorIterator& v) const
+                template<class Iter>
+                bool operator>(const Iter& v) const
                 {
-                    return ptr_ > v.ptr_;
+                    return static_cast<const_type>(*this).ptr_ > static_cast<const_type>(v).ptr_;
                 }
 
-                bool operator<=(const VectorIterator& v) const
+                template<class Iter>
+                bool operator<=(const Iter& v) const
                 {
-                    return ptr_ <= v.ptr_;
+                    return static_cast<const_type>(*this).ptr_ <= static_cast<const_type>(v).ptr_;
                 }
 
-                bool operator>=(const VectorIterator& v) const
+                template<class Iter>
+                bool operator>=(const Iter& v) const
                 {
-                    return ptr_ >= v.ptr_;
+                    return static_cast<const_type>(*this).ptr_ >= static_cast<const_type>(v).ptr_;
                 }
 
                 reference operator[](difference_type n) const
@@ -132,9 +139,14 @@ class vector
                     return VectorIterator(ptr_ - n);
                 }
 
-                difference_type operator-(const VectorIterator& v) const
+                difference_type operator-(const const_type& v) const
                 {
-                    return (ptr_ - v.ptr_);
+                    return (static_cast<const_type>(*this).ptr_ - v.ptr_);
+                }
+
+                difference_type operator-(const non_const_type& v) const
+                {
+                    return (static_cast<const_type>(*this).ptr_ - static_cast<const_type>(v).ptr_);
                 }
 
                 VectorIterator& operator-=(difference_type n)

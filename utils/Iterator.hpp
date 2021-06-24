@@ -26,42 +26,6 @@ struct iterator
 template <class Iterator>
 class reverse_iterator;
 
-// Non-member function overloads
-template <class Iterator>
-bool operator== (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-    return lhs.pos == rhs.pos;
-}
-
-template <class Iterator>
-bool operator!= (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-    return lhs.pos != rhs.pos;
-}
-
-template <class Iterator>
-bool operator<  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-    return lhs.pos > rhs.pos;
-}
-
-template <class Iterator>
-bool operator<= (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-    return lhs.pos >= rhs.pos;
-}
-
-template <class Iterator>
-bool operator>  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-    return lhs.pos < rhs.pos;
-}
-template <class Iterator>
-bool operator>=  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-    return lhs.pos <= rhs.pos;
-}
-
 /* http://www.cplusplus.com/reference/iterator/reverse_iterator/ */
 /* real e 1 2 3 4 5 e  */
 /* base   1 2 3 4 5 e  */
@@ -69,6 +33,7 @@ bool operator>=  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<
 template <class Iterator>
 class reverse_iterator
 {
+    template<class> friend class reverse_iterator;
     Iterator pos;
 
     public:
@@ -163,21 +128,46 @@ class reverse_iterator
         }
 
         template <class Iter>
-        friend bool operator== (const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs);
+        difference_type operator-(const reverse_iterator<Iter>& rhs)
+        {
+            return pos - rhs.pos;
+        }
 
         template <class Iter>
-        friend bool operator!= (const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs);
+        friend bool operator== (const reverse_iterator& lhs, const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos == rhs.pos;
+        }
 
         template <class Iter>
-        friend bool operator<  (const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs);
+        friend bool operator!= (const reverse_iterator& lhs, const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos != rhs.pos;
+        }
 
         template <class Iter>
-        friend bool operator<= (const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs);
+        friend bool operator<  (const reverse_iterator& lhs, const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos > rhs.pos;
+        }
 
         template <class Iter>
-        friend bool operator>  (const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs);
+        friend bool operator<= (const reverse_iterator& lhs, const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos >= rhs.pos;
+        }
+
         template <class Iter>
-        friend bool operator>=  (const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs);
+        friend bool operator>  (const reverse_iterator& lhs, const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos < rhs.pos;
+        }
+
+        template <class Iter>
+        friend bool operator>=  (const reverse_iterator& lhs, const reverse_iterator<Iter>& rhs)
+        {
+            return lhs.pos <= rhs.pos;
+        }
 };
 
 }
