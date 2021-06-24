@@ -36,13 +36,14 @@ class map
                 template<class, class, class, class> friend class map;
 
                 typedef typename remove_const<Tp>::type non_const_Tp;
-                typedef MapIterator<non_const_Tp>       non_const_iterator;
+                typedef MapIterator<non_const_Tp>       non_const_type;
+                typedef MapIterator<const non_const_Tp> const_type;
 
                 node* node_;
 
-                non_const_iterator asNonConst()
+                non_const_type asNonConst()
                 {
-                    return non_const_iterator(node_);
+                    return non_const_type(node_);
                 }
 
             public:
@@ -56,7 +57,7 @@ class map
                 {
                 }
 
-                MapIterator(const non_const_iterator& mi)
+                MapIterator(const non_const_type& mi)
                     : node_(mi.node_)
                 {
                 }
@@ -117,14 +118,16 @@ class map
                     return &(operator*());
                 }
 
-                bool operator==(const MapIterator& rhs) const
+                template <class Iter>
+                bool operator==(const Iter& rhs) const
                 {
-                    return (node_ == rhs.node_);
+                    return (static_cast<const_type>(*this).node_ == static_cast<const_type>(rhs).node_);
                 }
 
-                bool operator!=(const MapIterator& rhs) const
+                template <class Iter>
+                bool operator!=(const Iter& rhs) const
                 {
-                    return (node_ != rhs.node_);
+                    return (static_cast<const_type>(*this).node_ != static_cast<const_type>(rhs).node_);
                 }
         };
 
@@ -469,10 +472,11 @@ class map
 
         bool isUpperBound(iterator upperBound, const key_type& k)
         {
-            if (upperBound == end() && size_ == 0)
-                return true;
+            // if (upperBound == end() && size_ == 0)
+            //     return true;
             iterator before = prev(upperBound);
-            return (before->first < k && k < upperBound->first);
+            return ((before->first < k || before == minNode_) &&
+                    (k < upperBound->first || upperBound == maxNode_));
         }
 };
 
