@@ -71,7 +71,7 @@ class vector
                     return tmp;
                 }
 
-                reference operator*() const // reference??
+                reference operator*() const
                 {
                     return *ptr_;
                 }
