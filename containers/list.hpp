@@ -235,7 +235,7 @@ class   list
         }
         size_type max_size () const
         {
-            return std::numeric_limits<difference_type>::max(); // ??
+            return allocator_.max_size();
         }
 
         /* element access */
