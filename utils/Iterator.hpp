@@ -1,7 +1,6 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
-#include <iterator>
 #include <cstddef>
 
 namespace ft

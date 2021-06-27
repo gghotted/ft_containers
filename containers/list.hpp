@@ -2,13 +2,9 @@
 #define LIST_HPP
 
 #include <memory>
-#include <limits>
-// #include <list>
-// #include <iterator>
 #include "DoublyLinkedNode.hpp"
 #include "Iterator.hpp"
 #include "Utils.hpp"
-// #include "RelationalOperator.hpp"
 
 namespace ft
 {

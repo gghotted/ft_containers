@@ -2,7 +2,6 @@
 #define MAP_HPP
 
 #include <memory>
-#include <utility>
 #include "TreeNode.hpp"
 #include "Utils.hpp"
 #include "Iterator.hpp"
@@ -472,8 +471,6 @@ class map
 
         bool isUpperBound(iterator upperBound, const key_type& k)
         {
-            // if (upperBound == end() && size_ == 0)
-            //     return true;
             iterator before = prev(upperBound);
             return ((before->first < k || before == minNode_) &&
                     (k < upperBound->first || upperBound == maxNode_));

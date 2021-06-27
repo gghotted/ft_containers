@@ -1,6 +1,8 @@
 #ifndef TREENODE_HPP
 #define TREENODE_HPP
 
+#include <cstddef>
+
 namespace ft
 {
 
@@ -45,8 +47,6 @@ class TreeNode
 
         ~TreeNode()
         {
-            // unLinkParent();
-
         }
 
         TreeNode& operator=(const TreeNode& tn_)
@@ -110,7 +110,7 @@ class TreeNode
             return parent_;
         }
 
-        Tp& getContent() // Tp& vs Tp ??
+        Tp& getContent()
         {
             return content_;
         }

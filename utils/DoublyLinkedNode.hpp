@@ -1,8 +1,7 @@
 #ifndef DOUBLYLINKEDNODE_HPP
 #define DOUBLYLINKEDNODE_HPP
 
-#include <memory>
-#include "Iterator.hpp"
+#include <cstddef>
 
 namespace   ft
 {
