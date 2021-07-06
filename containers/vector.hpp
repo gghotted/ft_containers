@@ -518,8 +518,8 @@ class vector
         }
 };
 
-template <class Tp>
-typename vector<Tp>::iterator operator+(typename vector<Tp>::iterator::difference_type n, const typename vector<Tp>::iterator& v)
+template <class randomAccessIter>
+randomAccessIter operator+(const typename randomAccessIter::difference_type n, const randomAccessIter& v)
 {
     return (v + n);
 }
