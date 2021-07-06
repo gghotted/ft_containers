@@ -101,7 +101,7 @@ class reverse_iterator
 
         reference operator[] (difference_type n) const
         {
-            return pos[n];
+            return (pos - n)[0];
         }
 
         reverse_iterator operator+(difference_type n) const
@@ -129,7 +129,7 @@ class reverse_iterator
         template <class Iter>
         difference_type operator-(const reverse_iterator<Iter>& rhs)
         {
-            return pos - rhs.pos;
+            return -(pos - rhs.pos);
         }
 
         template <class Iter>
