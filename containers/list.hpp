@@ -492,12 +492,12 @@ class   list
             beginOfNode_->linkNext(endOfNode_);
         }
 
-        static bool isSame(const size_type& v1, const size_type& v2)
+        static bool isSame(const value_type& v1, const value_type& v2)
         {
             return v1 == v2;
         }
 
-        static bool isLess(const size_type& v1, const size_type& v2)
+        static bool isLess(const value_type& v1, const value_type& v2)
         {
             return v1 < v2;
         }
