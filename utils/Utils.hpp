@@ -130,7 +130,8 @@ OutputIterator copy(InputIterator first, InputIterator last, OutputIterator resu
 }
 
 template <class ForwardIterator, class T>
-void fill(ForwardIterator first, ForwardIterator last, const T& val)
+void fill(ForwardIterator first, ForwardIterator last, const T& val,
+          typename enable_if<is_integral<T>::value>::type* = 0)
 {
     for (; first != last; ++first)
         *first = val;

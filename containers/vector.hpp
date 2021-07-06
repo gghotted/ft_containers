@@ -412,7 +412,7 @@ class vector
             reserve(size_ + n);
             position = iterator(data_ + idx);
             shiftRight(position, n);
-            fill(position, position + n, val);
+            ft::fill(position, position + n, val);
             size_ += n;
         }
 
@@ -425,7 +425,7 @@ class vector
             reserve(size_ + n);
             position = iterator(data_ + idx);
             shiftRight(position, n);
-            fill(position, first, last);
+            ft::fill(position, first, last);
             size_ += n;
         }
 
@@ -484,12 +484,12 @@ class vector
 
         void shiftRight(iterator position, difference_type n)
         {
-            copy(rbegin(), reverse_iterator(position), rbegin() - n);
+            ft::copy(rbegin(), reverse_iterator(position), rbegin() - n);
         }
 
         void shiftLeft(iterator position, difference_type n)
         {
-            copy(position, end(), position - n);
+            ft::copy(position, end(), position - n);
         }
 
         void moveData(pointer newSpace)
@@ -499,7 +499,7 @@ class vector
                 data_ = newSpace;
                 return ;
             }
-            copy(begin(), end(), newSpace);
+            ft::copy(begin(), end(), newSpace);
             delete[] data_;
             data_ = newSpace;
         }
