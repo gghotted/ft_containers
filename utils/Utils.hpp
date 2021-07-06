@@ -163,6 +163,7 @@ struct pair
     first_type  first;
     second_type second;
 
+    pair() : first(), second() {}
     pair(const first_type& f, const second_type& s)
         : first(f),
           second(s)
